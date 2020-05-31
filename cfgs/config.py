@@ -28,9 +28,10 @@ def _mkdir(path):
     return path
 
 
+
 def get_base_path():
     if MACHINE == machine_taitan:
-        return "/home/wangqiang/x/"
+        return "/home/wangqiang/wq/x/tx20/"
 
     if MACHINE == machine_local:
         return "D:\\PycharmProjects\\tx2020\\"

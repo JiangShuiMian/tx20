@@ -47,5 +47,5 @@ for pair in test_pairs.iterrows():
 print(len(edge_dic.keys()))
 del test_pairs
 
-with open(os.path.join(graphsage_data_path, "edges.json"), 'r') as f:
+with open(os.path.join(graphsage_data_path, "edges.json"), 'w') as f:
     f.write(json.dumps(edge_dic))

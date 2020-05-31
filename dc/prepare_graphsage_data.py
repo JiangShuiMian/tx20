@@ -147,8 +147,6 @@ def get_nx_G():
     # print(len(edge_dic.keys()))
     # del test_pairs
 
-
-
     print("构建图。。。")
     G = nx.Graph()
     for key, w in edge_dic.items():

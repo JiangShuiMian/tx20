@@ -151,7 +151,7 @@ def get_nx_G():
     G = nx.Graph()
     print("添加节点。。。")
     for node, att in node_atts.items():
-        G.add_node(node, **att)
+        G.add_node(node, att)
 
     print("添加边。。。")
     for key, w in edge_dic.items():

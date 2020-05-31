@@ -4,10 +4,8 @@ import sys
 sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 import networkx as nx
-import networkx as nx
 from networkx.readwrite import json_graph
 import pandas as pd
-import collections
 import random
 import json
 from cfgs.config import o_train_data, o_test_data, graphsage_data_path
@@ -16,13 +14,18 @@ trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
 test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 train_user_data = os.path.join(o_train_data, "user.csv")
+edges_dic_file = os.path.join(graphsage_data_path, 'edges.json')
 
-FILE_PREFIX = 'tx-2020'
+FILE_PREFIX_AGE = 'tx-2020-age'
+FILE_PREFIX_GENDER = 'tx-2020-gender'
 
-g_file = os.path.join(graphsage_data_path, FILE_PREFIX + "-G.json")
-id_map_file = os.path.join(graphsage_data_path, FILE_PREFIX + "-id_map.json")
-age_class_map_file = os.path.join(graphsage_data_path, FILE_PREFIX + "-age-class_map.json")
-gender_class_map_file = os.path.join(graphsage_data_path, FILE_PREFIX + "-gender-class_map.json")
+g_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-G.json")
+id_map_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-id_map.json")
+class_map_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-class_map.json")
+
+g_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-G.json")
+id_map_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-id_map.json")
+class_map_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-class_map.json")
 
 
 def get_nx_G():
@@ -84,67 +87,85 @@ def get_nx_G():
     train_nodes = train_userids[num_val:]
     node_atts = {"u%s"%(uid):{'val':False, 'test':False} for uid in train_nodes}
     for nd in val_nodes:
-        node_atts.setdefault("u%s"%(nd), {'val':True, 'test': False})
+        node_atts.setdefault("u%s"%(nd), {'val': True, 'test': False})
 
     # 补全所有ids
     for maped_id in id_map.keys():
         age_class_map.setdefault(maped_id, 0)
         gender_class_map.setdefault(maped_id, 0)
-        node_atts.setdefault(maped_id, {'val':False, 'test':True})
+        node_atts.setdefault(maped_id, {'val': False, 'test': True})
 
     # 保存id-map
-    with open(id_map_file, 'w') as f:
+    with open(id_map_file_age, 'w') as f:
         f.write(json.dumps(id_map))
 
+    with open(id_map_file_gender, 'w') as f:
+        f.write(json.dumps(id_map))
+    del id_map
     print("保存id_map完成")
 
     # 保存class-map
-    with open(age_class_map_file, 'w') as f:
+    with open(class_map_file_age, 'w') as f:
         f.write(json.dumps(age_class_map))
-    print("保存age_class_map完成")
 
-    with open(gender_class_map_file, 'w') as f:
+    with open(class_map_file_gender, 'w') as f:
         f.write(json.dumps(gender_class_map))
+    del age_class_map
+    del gender_class_map
+    del user_df
+    print("保存age_class_map完成")
     print("保存gender_class_map完成")
+    print("读取边字典")
 
-    all_edges = []
-    all_nodes = {}
-    edge_dic = {}
-    for pair in train_pairs.iterrows():
-        user_id = pair[1]['user_id']
-        creative_id = pair[1]['creative_id']
-        pair_key = "u%s_c%s" % (user_id, creative_id)
-        all_edges.append(pair_key)
-        weight = edge_dic.setdefault(pair_key, 0)
-        edge_dic[pair_key] = weight + 1
+    with open(edges_dic_file, 'r') as f:
+        edge_dic = json.load(f)
+    print(len(edge_dic.keys()))
+    # all_edges = []
+    # print("读取训练数据中边。。。")
+    # train_pairs['edge'] = 'u%s_c%s' % (train_pairs, train_pairs[])
+    # edge_dic = {}
+    # train_pairs_userids = train_pairs['user_id']
+    # train_pairs_creativeids = train_pairs['creative_id']
+    # for index, user_id in enumerate(train_pairs_userids):
+    #     # user_id = pair[1]['user_id']
+    #     creative_id = train_pairs_creativeids[index]
+    #     pair_key = "u%s_c%s" % (user_id, creative_id)
+    #     # all_edges.append(pair_key)
+    #     weight = edge_dic.setdefault(pair_key, 0)
+    #     edge_dic[pair_key] = weight + 1
+    # print(len(edge_dic.keys()))
+    # del train_pairs
+    #
+    # print("读取测试数据中边...")
+    # for pair in test_pairs.iterrows():
+    #     user_id = pair[1]['user_id']
+    #     creative_id = pair[1]['creative_id']
+    #     pair_key = "u%s_c%s" % (user_id, creative_id)
+    #     # all_edges.append(pair_key)
+    #     weight = edge_dic.setdefault(pair_key, 0)
+    #     edge_dic[pair_key] = weight + 1
+    # print(len(edge_dic.keys()))
+    # del test_pairs
 
-    for pair in test_pairs.iterrows():
-        user_id = pair[1]['user_id']
-        creative_id = pair[1]['creative_id']
-        pair_key = "u%s_c%s" % (user_id, creative_id)
-        all_edges.append(pair_key)
-        weight = edge_dic.setdefault(pair_key, 0)
-        edge_dic[pair_key] = weight + 1
 
-    # count = collections.Counter(all_edges)
 
+    print("构建图。。。")
     G = nx.Graph()
     for key, w in edge_dic.items():
         ns = key.split('_')
         node1 = ns[0]
         node2 = ns[1]
-        G.add_node(node1, **node_atts.setdefault(node1, {'val':False, 'test':True}))
-        G.add_node(node2, **node_atts.setdefault(node2, {'val':False, 'test':True}))
-        G.add_edge(node1, node2)
-        # G[node1][node2] = w
+        G.add_node(node1, **node_atts.setdefault(node1, {'val': False, 'test': True}))
+        G.add_node(node2, **node_atts.setdefault(node2, {'val': False, 'test': True}))
+        G.add_edge(node1, node2, weight=w)
 
-    with open(g_file, 'w') as f:
-        # json.dump(dict(nodes=[[n, G.node[n]] for n in G.nodes()],
-        #                edges=[[u, v, G.edge[u][v]] for u, v in G.edges()]),
-        #           f, indent=2)
-
+    # 保存图到json
+    with open(g_file_age, 'w') as f:
         g_dic = json_graph.node_link_data(G)
-        print(g_dic.keys())
+        f.write(json.dumps(g_dic))
+
+    with open(g_file_gender, 'w') as f:
+        g_dic = json_graph.node_link_data(G)
         f.write(json.dumps(g_dic))
 
 

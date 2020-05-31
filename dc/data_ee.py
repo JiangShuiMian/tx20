@@ -68,5 +68,14 @@ def read_data():
     loger.info("训练集和测试机 user_id 交集 num: %d" % (len(test_user_ids & train_user_ids)))
 
 
+def clean_click_data():
+    train_click_data = pd.read_csv(os.path.join(o_train_data, "click_log.csv"), encoding='utf-8')
+    test_click_data = pd.read_csv(os.path.join(o_test_data, "click_log.csv"), encoding='utf-8')
+    print_line(train_click_data.shape)
+    print_line(test_click_data.shape)
+    train_click_data[]
+
+
 if __name__ == '__main__':
-    read_data()
+    # read_data()
+    clean_click_data()

@@ -60,6 +60,10 @@ os.environ["CUDA_VISIBLE_DEVICES"]=str(FLAGS.gpu)
 
 GPU_MEM_FRACTION = 0.8
 
+# 保存预测结果
+def save_predict_res(preds, nodes):
+    pass
+
 
 def calc_f1(y_true, y_pred):
     if not FLAGS.sigmoid:
@@ -94,19 +98,26 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     t_test = time.time()
     finished = False
     val_losses = []
-    val_preds = []
+    val_preds = [] # nodes
     labels = []
+    nodes = []
     iter_num = 0
     finished = False
     while not finished:
         feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
+        nodes.append(feed_dict_val['batch'])
         val_preds.append(node_outs_val[0])
         labels.append(batch_labels)
         val_losses.append(node_outs_val[1])
         iter_num += 1
     val_preds = np.vstack(val_preds)
     labels = np.vstack(labels)
+
+    if test == True:
+        nodes = np.vstack(nodes)
+        save_predict_res(val_preds, nodes)
+
     f1_scores = calc_f1(labels, val_preds)
     return np.mean(val_losses), f1_scores[0], f1_scores[1], (time.time() - t_test)
 

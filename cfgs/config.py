@@ -34,7 +34,7 @@ def get_base_path():
         return "/home/wangqiang/wq/x/tx20/"
 
     if MACHINE == machine_local:
-        return "D:\\PycharmProjects\\tx2020\\"
+        return "D:\\PycharmProjects\\tx2020-github\\"
 
 
 def get_x_path(base_path, mode):

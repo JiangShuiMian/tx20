@@ -14,7 +14,8 @@ trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
 test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 train_user_data = os.path.join(o_train_data, "user.csv")
-edges_dic_file = os.path.join(graphsage_data_path, 'edges.json')
+edges_dic_file = os.path.join(graphsage_data_path, 'edges.json') # 所有的边及权重
+nodes_dic_file = os.path.join(graphsage_data_path, 'nodes.json') #所有的节点及属性
 
 FILE_PREFIX_AGE = 'tx-2020-age'
 FILE_PREFIX_GENDER = 'tx-2020-gender'
@@ -110,42 +111,28 @@ def get_nx_G():
 
     with open(class_map_file_gender, 'w') as f:
         f.write(json.dumps(gender_class_map))
-    del age_class_map
-    del gender_class_map
-    del user_df
+    # del age_class_map
+    # del gender_class_map
+    # del user_df
+    # del train_pairs
+    # del test_pairs
+    # del train_userids
     print("保存age_class_map完成")
     print("保存gender_class_map完成")
-    print("读取边字典")
+    print("保存节点属性数据")
+
+    # 保存节点属性
+    with open(nodes_dic_file, 'w') as f:
+        f.write(json.dumps(node_atts))
+
+
+def build_graph():
+    with open(nodes_dic_file, 'r') as f:
+        node_atts = json.load(f)
 
     with open(edges_dic_file, 'r') as f:
         edge_dic = json.load(f)
     print(len(edge_dic.keys()))
-    # all_edges = []
-    # print("读取训练数据中边。。。")
-    # train_pairs['edge'] = 'u%s_c%s' % (train_pairs, train_pairs[])
-    # edge_dic = {}
-    # train_pairs_userids = train_pairs['user_id']
-    # train_pairs_creativeids = train_pairs['creative_id']
-    # for index, user_id in enumerate(train_pairs_userids):
-    #     # user_id = pair[1]['user_id']
-    #     creative_id = train_pairs_creativeids[index]
-    #     pair_key = "u%s_c%s" % (user_id, creative_id)
-    #     # all_edges.append(pair_key)
-    #     weight = edge_dic.setdefault(pair_key, 0)
-    #     edge_dic[pair_key] = weight + 1
-    # print(len(edge_dic.keys()))
-    # del train_pairs
-    #
-    # print("读取测试数据中边...")
-    # for pair in test_pairs.iterrows():
-    #     user_id = pair[1]['user_id']
-    #     creative_id = pair[1]['creative_id']
-    #     pair_key = "u%s_c%s" % (user_id, creative_id)
-    #     # all_edges.append(pair_key)
-    #     weight = edge_dic.setdefault(pair_key, 0)
-    #     edge_dic[pair_key] = weight + 1
-    # print(len(edge_dic.keys()))
-    # del test_pairs
 
     print("构建图。。。")
     G = nx.Graph()
@@ -174,3 +161,4 @@ def get_nx_G():
 
 if __name__ == '__main__':
     get_nx_G()
+    build_graph()

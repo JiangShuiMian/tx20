@@ -19,23 +19,29 @@ age_class_map_file = os.path.join(graphsage_data_path, FILE_PREFIX + "-age-class
 gender_class_map_file = os.path.join(graphsage_data_path, FILE_PREFIX + "-gender-class_map.json")
 
 
-with open(id_map_file, 'r') as f:
-    ids = json.load(f)
-    print(len(ids))
+# with open(id_map_file, 'r') as f:
+#     ids = json.load(f)
+#     print(len(ids))
+#
+# with open(age_class_map_file, 'r') as f:
+#     ids = json.load(f)
+#     print(len(ids))
+#
+# with open(gender_class_map_file, 'r') as f:
+#     ids = json.load(f)
+#     print(len(ids))
+#
+# with open(g_file, 'r') as f:
+#     g_dic = json.load(f)
+#     print(g_dic.keys())
+#
+#
+# with open("D:\\PycharmProjects\\tx2020\\GraphSAGE\\example_data\\toy-ppi-G.json", 'r') as f:
+#     d = json.load(f)
+#     print(d.keys())
 
-with open(age_class_map_file, 'r') as f:
-    ids = json.load(f)
-    print(len(ids))
+edges_dic_file = os.path.join(graphsage_data_path, 'edges.json')
 
-with open(gender_class_map_file, 'r') as f:
-    ids = json.load(f)
-    print(len(ids))
-
-with open(g_file, 'r') as f:
-    g_dic = json.load(f)
-    print(g_dic.keys())
-
-
-with open("D:\\PycharmProjects\\tx2020\\GraphSAGE\\example_data\\toy-ppi-G.json", 'r') as f:
-    d = json.load(f)
-    print(d.keys())
+with open(edges_dic_file, 'r') as f:
+    edge_dic = json.load(f)
+print(len(edge_dic.keys()))

@@ -13,8 +13,8 @@ major = version_info[0]
 minor = version_info[1]
 assert (major <= 1) and (minor <= 11), "networkx major version > 1.11"
 
-WALK_LEN=5
-N_WALKS=50
+WALK_LEN = 5
+N_WALKS = 50
 
 
 def load_data(prefix, normalize=True, load_walks=False):

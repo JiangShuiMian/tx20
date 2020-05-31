@@ -1,6 +1,8 @@
-# -*- coding:utf-8 -*-
-
+# -*- coding: utf-8 -*-
 import os
+import sys
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
+
 import networkx as nx
 import networkx as nx
 from networkx.readwrite import json_graph

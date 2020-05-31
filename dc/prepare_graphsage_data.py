@@ -149,12 +149,17 @@ def get_nx_G():
 
     print("构建图。。。")
     G = nx.Graph()
+    print("添加节点。。。")
+    for node, att in node_atts.items():
+        G.add_node(node, **att)
+
+    print("添加边。。。")
     for key, w in edge_dic.items():
         ns = key.split('_')
         node1 = ns[0]
         node2 = ns[1]
-        G.add_node(node1, **node_atts.setdefault(node1, {'val': False, 'test': True}))
-        G.add_node(node2, **node_atts.setdefault(node2, {'val': False, 'test': True}))
+        # G.add_node(node1, **node_atts.setdefault(node1, {'val': False, 'test': True}))
+        # G.add_node(node2, **node_atts.setdefault(node2, {'val': False, 'test': True}))
         G.add_edge(node1, node2, weight=w)
 
     # 保存图到json

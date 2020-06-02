@@ -225,15 +225,13 @@ class NodeMinibatchIterator(object):
         return label_vec
 
     def construct_adj(self):
-        adj = len(self.id2idx)*np.ones((len(self.id2idx)+1, self.max_degree))
+        adj = len(self.id2idx) * np.ones((len(self.id2idx)+1, self.max_degree))
         deg = np.zeros((len(self.id2idx),))
 
         for nodeid in self.G.nodes():
             if self.G.node[nodeid]['test'] or self.G.node[nodeid]['val']:
                 continue
-            neighbors = np.array([self.id2idx[neighbor] 
-                for neighbor in self.G.neighbors(nodeid)
-                if (not self.G[nodeid][neighbor]['train_removed'])])
+            neighbors = np.array([self.id2idx[neighbor] for neighbor in self.G.neighbors(nodeid) if (not self.G[nodeid][neighbor]['train_removed'])])
             deg[self.id2idx[nodeid]] = len(neighbors)
             if len(neighbors) == 0:
                 continue
@@ -289,8 +287,8 @@ class NodeMinibatchIterator(object):
             val_nodes = self.test_nodes
         else:
             val_nodes = self.val_nodes
-        val_node_subset = val_nodes[iter_num*size:min((iter_num+1)*size, 
-            len(val_nodes))]
+
+        val_node_subset = val_nodes[iter_num*size:min((iter_num+1)*size, len(val_nodes))]
 
         # add a dummy neighbor
         ret_val = self.batch_feed_dict(val_node_subset)

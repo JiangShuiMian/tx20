@@ -111,7 +111,7 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     while not finished:
         feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
-        nodes.append(feed_dict_val['batch'])
+        # nodes.append(feed_dict_val['batch'])
         val_preds.append(node_outs_val[0])
         labels.append(batch_labels)
         val_losses.append(node_outs_val[1])
@@ -119,9 +119,9 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     val_preds = np.vstack(val_preds)
     labels = np.vstack(labels)
 
-    if test == True:
-        nodes = np.vstack(nodes)
-        save_predict_res(val_preds, nodes)
+    # if test == True:
+    #     nodes = np.vstack(nodes)
+    #     save_predict_res(val_preds, nodes)
 
     f1_scores = calc_f1(labels, val_preds)
     return np.mean(val_losses), f1_scores[0], f1_scores[1], (time.time() - t_test)

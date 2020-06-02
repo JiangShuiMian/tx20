@@ -26,6 +26,7 @@ print("读取训练数据中边。。。")
 
 train_pairs_userids = train_pairs['user_id']
 train_pairs_creativeids = train_pairs['creative_id']
+
 for index, user_id in enumerate(train_pairs_userids):
     # user_id = pair[1]['user_id']
     creative_id = train_pairs_creativeids[index]

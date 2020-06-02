@@ -15,7 +15,7 @@ test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 train_user_data = os.path.join(o_train_data, "user.csv")
 edges_dic_file = os.path.join(graphsage_data_path, 'edges.json') # 所有的边及权重
-nodes_dic_file = os.path.join(graphsage_data_path, 'nodes.json') #所有的节点及属性
+nodes_dic_file = os.path.join(graphsage_data_path, 'nodes.json') # 所有的节点及属性
 
 FILE_PREFIX_AGE = 'tx-2020-age'
 FILE_PREFIX_GENDER = 'tx-2020-gender'
@@ -137,10 +137,12 @@ def build_graph():
     print("构建图。。。")
     G = nx.Graph()
     print("添加节点。。。")
+    print("节点数：%d" % (len(node_atts)))
     for node, att in node_atts.items():
         G.add_node(node, att)
 
     print("添加边。。。")
+    print("边数：%d" % (len(edge_dic)))
     for key, w in edge_dic.items():
         ns = key.split('_')
         node1 = ns[0]
@@ -160,5 +162,5 @@ def build_graph():
 
 
 if __name__ == '__main__':
-    get_nx_G()
+    # get_nx_G()
     build_graph()

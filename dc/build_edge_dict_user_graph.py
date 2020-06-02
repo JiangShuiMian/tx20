@@ -28,36 +28,27 @@ train_pairs_userids = train_pairs['user_id']
 train_pairs_creativeids = train_pairs['creative_id']
 
 for index, user_id in enumerate(train_pairs_userids):
-    # user_id = pair[1]['user_id']
     creative_id = train_pairs_creativeids[index]
-    # pair_key = "u%s_c%s" % (user_id, creative_id)
-    # # all_edges.append(pair_key)
-    # weight = edge_dic.setdefault(pair_key, 0)
-    # edge_dic[pair_key] = weight + 1
     uids = creative_id_user_list.setdefault(creative_id, set())
     uids.add(user_id)
 
-# print(len(edge_dic.keys()))
-# del train_pairs
 
-print("读取测试数据中边...")
-for pair in test_pairs.iterrows():
-    user_id = pair[1]['user_id']
-    creative_id = pair[1]['creative_id']
-    # pair_key = "u%s_c%s" % (user_id, creative_id)
-    # all_edges.append(pair_key)
-    # weight = edge_dic.setdefault(pair_key, 0)
-    # edge_dic[pair_key] = weight + 1
-    uids = creative_id_user_list.setdefault(creative_id, set())
-    uids.add(user_id)
-# print(len(edge_dic.keys()))
-# del test_pairs
+# print("读取测试数据中边...")
+# for pair in test_pairs.iterrows():
+#     user_id = pair[1]['user_id']
+#     creative_id = pair[1]['creative_id']
+#     uids = creative_id_user_list.setdefault(creative_id, set())
+#     uids.add(user_id)
 
-print(creative_id_user_list)
+for key, value in creative_id_user_list.items()[0:100]:
+    print(key)
+    print(value)
 
 edge_dic = {}
 for _, uids in creative_id_user_list.items():
-    [edge_dic.setdefault("u%s_u%s" % (uids[i-1], uids[i]), 1) for i in range(1, len(uids))]
+    us = list(uids)
+    [edge_dic.setdefault("u%s_u%s" % (us[i-1], us[i]), 1) for i in range(1, len(uids))]
+
 
 with open(os.path.join(graphsage_data_path_user_graph, "edges.json"), 'w') as f:
     f.write(json.dumps(edge_dic))

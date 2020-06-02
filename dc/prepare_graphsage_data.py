@@ -86,7 +86,13 @@ def get_nx_G():
     num_val = int(0.2 * len(train_userids))
     val_nodes = train_userids[0:num_val]
     train_nodes = train_userids[num_val:]
-    node_atts = {"u%s"%(uid):{'val':False, 'test':False} for uid in train_nodes}
+
+    print('all user nodes len: %d' % (len(train_userids)))
+    print('train nodes len: %d' % (len(train_nodes)))
+    print('val nodes len: %d' % (len(val_nodes)))
+
+    node_atts = {"u%s" % (uid): {'val': False, 'test': False} for uid in train_nodes}
+
     for nd in val_nodes:
         node_atts.setdefault("u%s"%(nd), {'val': True, 'test': False})
 

@@ -1,1 +1,1 @@
-python -m graphsage.supervised_train --train_prefix ./home/wangqiang/wq/x/tx20/datas/gs_datas/tx-2020-age --model graphsage_mean --sigmoid
+python -m graphsage.supervised_train --train_prefix /home/wangqiang/wq/x/tx20/datas/gs_datas/tx-2020-age --model graphsage_mean --sigmoid

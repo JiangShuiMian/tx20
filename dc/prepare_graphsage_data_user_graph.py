@@ -8,25 +8,25 @@ from networkx.readwrite import json_graph
 import pandas as pd
 import random
 import json
-from cfgs.config import o_train_data, o_test_data, graphsage_data_path
+from cfgs.config import o_train_data, o_test_data, graphsage_data_path_user_graph
 
 trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
 test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 train_user_data = os.path.join(o_train_data, "user.csv")
-edges_dic_file = os.path.join(graphsage_data_path, 'edges.json') # 所有的边及权重
-nodes_dic_file = os.path.join(graphsage_data_path, 'nodes.json') #所有的节点及属性
+edges_dic_file = os.path.join(graphsage_data_path_user_graph, 'edges.json') # 所有的边及权重
+nodes_dic_file = os.path.join(graphsage_data_path_user_graph, 'nodes.json') #所有的节点及属性
 
 FILE_PREFIX_AGE = 'tx-2020-age'
 FILE_PREFIX_GENDER = 'tx-2020-gender'
 
-g_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-G.json")
-id_map_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-id_map.json")
-class_map_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-class_map.json")
+g_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-G.json")
+id_map_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-id_map.json")
+class_map_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-class_map.json")
 
-g_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-G.json")
-id_map_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-id_map.json")
-class_map_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-class_map.json")
+g_file_gender = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_GENDER + "-G.json")
+id_map_file_gender = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_GENDER + "-id_map.json")
+class_map_file_gender = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_GENDER + "-class_map.json")
 
 
 def get_nx_G():
@@ -35,7 +35,6 @@ def get_nx_G():
     :return:
     """
     cols = ['user_id', 'creative_id']
-    user_cols = ['user_id', 'age', 'gender']
 
     train_pairs = pd.read_csv(trian_click_log_data, encoding='utf-8', dtype=object)[cols]
     test_pairs = pd.read_csv(test_click_log_data, encoding='utf-8', dtype=object)[cols]

@@ -38,6 +38,9 @@ def get_nx_G():
     print("训练数据大小: %d" % (train_pairs.shape[0]))
     print("测试数据大小: %d" % (test_pairs.shape[0]))
 
+    # 训练数据大小: 30082771
+    # 测试数据大小: 33585512
+
     # 读用户属性
     user_df = pd.read_csv(train_user_data, encoding='utf-8', dtype=object)
 
@@ -51,7 +54,7 @@ def get_nx_G():
     all_user_ids = set(train_userids + test_user_ids)
     all_creative_ids = set(train_creative_ids + test_creative_ids)
 
-    print("训练数据中user id 个数：%d" % (len(train_userids)))
+    print("训练数据中user id 个数：%d" % (len(train_userids))) #
     print("测试数据中user id 个数：%d" % (len(test_user_ids)))
     print("训练和测试数据中user id 总个数：%d" % (len(all_user_ids)))
     print("训练集和测试集中user id 交集个数 %d" % (len(all_user_ids) - (len(train_userids) + len(test_user_ids))))
@@ -61,6 +64,15 @@ def get_nx_G():
     print("训练和测试数据中 creative_id 总个数：%d" % (len(all_creative_ids)))
     print("训练集和测试集中 creative_id 交集个数 %d" % (len(all_creative_ids) - (len(train_creative_ids) + len(test_creative_ids))))
 
+    # 训练数据中user id 个数：900000
+    # 测试数据中user id 个数：1000000
+    # 训练和测试数据中user id 总个数：1900000
+    # 训练集和测试集中user id 交集个数 0
+    # 训练数据中 creative_id 个数：2481135
+    # 训练数据中 creative_id 个数：2618159
+    # 训练和测试数据中 creative_id 总个数：3412772
+    # 训练集和测试集中 creative_id 交集个数 -1686522
+
     # 构造id字典
     user_id_dic = {'u%s'%(uid): index for index, uid in enumerate(all_user_ids)}
     user_num = len(all_user_ids)
@@ -68,7 +80,7 @@ def get_nx_G():
 
     # 合并用户字典和广告字典
     id_map = {**user_id_dic, **creative_id_dic}
-    print("id_map keys number: %d" % (len(id_map.keys())))
+    print("id_map keys number: %d" % (len(id_map.keys()))) # 5312772
 
     # 构造节点label 字典
     age_class_map = {}
@@ -87,20 +99,23 @@ def get_nx_G():
     val_nodes = train_userids[0:num_val]
     train_nodes = train_userids[num_val:]
 
-    print('all user nodes len: %d' % (len(train_userids)))
-    print('train nodes len: %d' % (len(train_nodes)))
-    print('val nodes len: %d' % (len(val_nodes)))
+    print('all user nodes len: %d' % (len(train_userids))) # 900000
+    print('train nodes len: %d' % (len(train_nodes))) # 720000
+    print('val nodes len: %d' % (len(val_nodes))) # 180000
 
     node_atts = {"u%s" % (uid): {'val': False, 'test': False} for uid in train_nodes}
 
     for nd in val_nodes:
         node_atts.setdefault("u%s"%(nd), {'val': True, 'test': False})
 
+    for nd in test_user_ids:
+        node_atts.setdefault("u%s" % (nd), {'val': False, 'test': True})
+
     # 补全所有ids
     for maped_id in id_map.keys():
         age_class_map.setdefault(maped_id, 0)
         gender_class_map.setdefault(maped_id, 0)
-        node_atts.setdefault(maped_id, {'val': False, 'test': True})
+        # node_atts.setdefault(maped_id, {'val': False, 'test': True})
 
     # 保存id-map
     with open(id_map_file_age, 'w') as f:

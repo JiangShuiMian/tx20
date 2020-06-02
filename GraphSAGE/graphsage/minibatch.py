@@ -212,9 +212,10 @@ class NodeMinibatchIterator(object):
         self.no_train_nodes_set = set(self.val_nodes + self.test_nodes)
         self.train_nodes = set(G.nodes()).difference(self.no_train_nodes_set)
         # don't train on nodes that only have edges to test set
+        print("train nodes length: %d" % (len(self.train_nodes)))
         self.train_nodes = [n for n in self.train_nodes if self.deg[id2idx[n]] > 0]
 
-        print("train nodes length: %d" % (len(self.train_nodes)))
+        print("train nodes (deg > 0) length: %d" % (len(self.train_nodes)))
         print("test nodes length: %d" % (len(self.test_nodes)))
         print("val nodes length: %d" % (len(self.val_nodes)))
 

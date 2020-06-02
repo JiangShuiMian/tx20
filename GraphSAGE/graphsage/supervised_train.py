@@ -42,7 +42,7 @@ flags.DEFINE_string('train_prefix', '', 'prefix identifying training data. must 
 flags.DEFINE_integer('epochs', 10, 'number of epochs to train.')
 flags.DEFINE_float('dropout', 0.0, 'dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0.0, 'weight for l2 loss on embedding matrix.')
-flags.DEFINE_integer('max_degree', 32, 'maximum node degree.')
+flags.DEFINE_integer('max_degree', 32, 'maximum node degree. 最大邻居节点个数')
 flags.DEFINE_integer('samples_1', 25, 'number of samples in layer 1')
 flags.DEFINE_integer('samples_2', 10, 'number of samples in layer 2')
 flags.DEFINE_integer('samples_3', 0, 'number of users samples in layer 3. (Only for mean model)')
@@ -55,7 +55,7 @@ flags.DEFINE_integer('identity_dim', 200, 'Set to positive value to use identity
 
 #logging, saving, validation settings etc.
 flags.DEFINE_string('base_log_dir', '.', 'base directory for logging and saving embeddings')
-flags.DEFINE_integer('validate_iter', 5000, "how often to run a validation minibatch.")
+flags.DEFINE_integer('validate_iter', 1000, "how often to run a validation minibatch.")
 flags.DEFINE_integer('validate_batch_size', 256, "how many nodes per validation sample.")
 flags.DEFINE_integer('gpu', 1, "which gpu to use.")
 flags.DEFINE_integer('print_every', 5, "How often to print training info.")
@@ -65,9 +65,11 @@ os.environ["CUDA_VISIBLE_DEVICES"]=str(FLAGS.gpu)
 
 GPU_MEM_FRACTION = 0.8
 
+
 # 保存预测结果
 def save_predict_res(preds, nodes):
-    pass
+    print(preds)
+    print(nodes)
 
 
 def calc_f1(y_true, y_pred):
@@ -78,6 +80,7 @@ def calc_f1(y_true, y_pred):
         y_pred[y_pred > 0.5] = 1
         y_pred[y_pred <= 0.5] = 0
     return metrics.f1_score(y_true, y_pred, average="micro"), metrics.f1_score(y_true, y_pred, average="macro")
+
 
 # Define model evaluation function
 def evaluate(sess, model, minibatch_iter, size=None):
@@ -110,8 +113,8 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     finished = False
     while not finished:
         feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
+        nodes.append(feed_dict_val['batch'])
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
-        # nodes.append(feed_dict_val['batch'])
         val_preds.append(node_outs_val[0])
         labels.append(batch_labels)
         val_losses.append(node_outs_val[1])
@@ -119,9 +122,9 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     val_preds = np.vstack(val_preds)
     labels = np.vstack(labels)
 
-    # if test == True:
-    #     nodes = np.vstack(nodes)
-    #     save_predict_res(val_preds, nodes)
+    if test == True:
+        nodes = np.vstack(nodes)
+        save_predict_res(val_preds, nodes)
 
     f1_scores = calc_f1(labels, val_preds)
     return np.mean(val_losses), f1_scores[0], f1_scores[1], (time.time() - t_test)
@@ -130,10 +133,10 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
 def construct_placeholders(num_classes):
     # Define placeholders
     placeholders = {
-        'labels' : tf.placeholder(tf.float32, shape=(None, num_classes), name='labels'),
-        'batch' : tf.placeholder(tf.int32, shape=(None), name='batch1'),
+        'labels': tf.placeholder(tf.float32, shape=(None, num_classes), name='labels'),
+        'batch': tf.placeholder(tf.int32, shape=(None), name='batch1'),
         'dropout': tf.placeholder_with_default(0., shape=(), name='dropout'),
-        'batch_size' : tf.placeholder(tf.int32, name='batch_size'),
+        'batch_size': tf.placeholder(tf.int32, name='batch_size'),
     }
     return placeholders
 

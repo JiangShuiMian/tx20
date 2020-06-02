@@ -214,6 +214,11 @@ class NodeMinibatchIterator(object):
         # don't train on nodes that only have edges to test set
         self.train_nodes = [n for n in self.train_nodes if self.deg[id2idx[n]] > 0]
 
+        print("train nodes length: %d" % (len(self.train_nodes)))
+        print("test nodes length: %d" % (len(self.test_nodes)))
+        print("val nodes length: %d" % (len(self.val_nodes)))
+
+
     def _make_label_vec(self, node):
         label = self.label_map[node]
         if isinstance(label, list):
@@ -245,8 +250,7 @@ class NodeMinibatchIterator(object):
     def construct_test_adj(self):
         adj = len(self.id2idx)*np.ones((len(self.id2idx)+1, self.max_degree))
         for nodeid in self.G.nodes():
-            neighbors = np.array([self.id2idx[neighbor] 
-                for neighbor in self.G.neighbors(nodeid)])
+            neighbors = np.array([self.id2idx[neighbor] for neighbor in self.G.neighbors(nodeid)])
             if len(neighbors) == 0:
                 continue
             if len(neighbors) > self.max_degree:

@@ -13,8 +13,10 @@ from graphsage.models import SAGEInfo
 from graphsage.minibatch import NodeMinibatchIterator
 from graphsage.neigh_samplers import UniformNeighborSampler
 from graphsage.utils import load_data
+from cfgs.config import base_log_path
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
 
 # Set random seed
 seed = 123
@@ -37,7 +39,7 @@ flags.DEFINE_string('train_prefix', '', 'prefix identifying training data. must 
 flags.DEFINE_integer('epochs', 10, 'number of epochs to train.')
 flags.DEFINE_float('dropout', 0.0, 'dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0.0, 'weight for l2 loss on embedding matrix.')
-flags.DEFINE_integer('max_degree', 128, 'maximum node degree.')
+flags.DEFINE_integer('max_degree', 32, 'maximum node degree.')
 flags.DEFINE_integer('samples_1', 25, 'number of samples in layer 1')
 flags.DEFINE_integer('samples_2', 10, 'number of samples in layer 2')
 flags.DEFINE_integer('samples_3', 0, 'number of users samples in layer 3. (Only for mean model)')
@@ -49,7 +51,7 @@ flags.DEFINE_boolean('sigmoid', False, 'whether to use sigmoid loss')
 flags.DEFINE_integer('identity_dim', 200, 'Set to positive value to use identity embedding features of that dimension. Default 0.')
 
 #logging, saving, validation settings etc.
-flags.DEFINE_string('base_log_dir', '.', 'base directory for logging and saving embeddings')
+flags.DEFINE_string('base_log_dir', base_log_path, 'base directory for logging and saving embeddings')
 flags.DEFINE_integer('validate_iter', 5000, "how often to run a validation minibatch.")
 flags.DEFINE_integer('validate_batch_size', 256, "how many nodes per validation sample.")
 flags.DEFINE_integer('gpu', 1, "which gpu to use.")

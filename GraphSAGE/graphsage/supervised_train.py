@@ -2,6 +2,9 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import sys
+sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
+
 import time
 import tensorflow as tf
 import numpy as np
@@ -16,7 +19,7 @@ from graphsage.utils import load_data
 from cfgs.config import base_log_path
 
 os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-sys.path.append(os.path.split(os.path.abspath(os.path.dirname(__file__)))[0])
+
 
 # Set random seed
 seed = 123

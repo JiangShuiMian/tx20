@@ -59,3 +59,5 @@ base_model_path = get_x_path(_base_path, 'm')
 base_log_path = get_x_path(_base_path, 'l')
 
 graphsage_data_path = _mkdir(os.path.join(data_path, "gs_datas"))
+
+graphsage_data_path_user_graph = _mkdir(os.path.join(data_path, "gs_datas_user_graph")) # user 构成的图

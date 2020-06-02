@@ -3,4 +3,5 @@
 *.csv
 *.pdf
 *.log
+.idea
 /venv

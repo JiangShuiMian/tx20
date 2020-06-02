@@ -8,30 +8,33 @@ from networkx.readwrite import json_graph
 import pandas as pd
 import random
 import json
-from cfgs.config import o_train_data, o_test_data, graphsage_data_path
+from cfgs.config import o_train_data, o_test_data, graphsage_data_path_user_graph
 
 trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
 test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 train_user_data = os.path.join(o_train_data, "user.csv")
-edges_dic_file = os.path.join(graphsage_data_path, 'edges.json') # 所有的边及权重
-nodes_dic_file = os.path.join(graphsage_data_path, 'nodes.json') # 所有的节点及属性
+edges_dic_file = os.path.join(graphsage_data_path_user_graph, 'edges.json') # 所有的边及权重
+nodes_dic_file = os.path.join(graphsage_data_path_user_graph, 'nodes.json') #所有的节点及属性
 
 FILE_PREFIX_AGE = 'tx-2020-age'
 FILE_PREFIX_GENDER = 'tx-2020-gender'
 
-g_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-G.json")
-id_map_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-id_map.json")
-class_map_file_age = os.path.join(graphsage_data_path, FILE_PREFIX_AGE + "-class_map.json")
+g_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-G.json")
+id_map_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-id_map.json")
+class_map_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-class_map.json")
 
-g_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-G.json")
-id_map_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-id_map.json")
-class_map_file_gender = os.path.join(graphsage_data_path, FILE_PREFIX_GENDER + "-class_map.json")
+g_file_gender = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_GENDER + "-G.json")
+id_map_file_gender = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_GENDER + "-id_map.json")
+class_map_file_gender = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_GENDER + "-class_map.json")
 
 
 def get_nx_G():
+    """
+    只使用 user id 构建图
+    :return:
+    """
     cols = ['user_id', 'creative_id']
-    user_cols = ['user_id', 'age', 'gender']
 
     train_pairs = pd.read_csv(trian_click_log_data, encoding='utf-8', dtype=object)[cols]
     test_pairs = pd.read_csv(test_click_log_data, encoding='utf-8', dtype=object)[cols]
@@ -48,21 +51,21 @@ def get_nx_G():
     train_userids = list(train_pairs['user_id'].unique())
     test_user_ids = list(test_pairs['user_id'].unique())
 
-    train_creative_ids = list(train_pairs['creative_id'].unique())
-    test_creative_ids = list(test_pairs['creative_id'].unique())
+    # train_creative_ids = list(train_pairs['creative_id'].unique())
+    # test_creative_ids = list(test_pairs['creative_id'].unique())
 
     all_user_ids = set(train_userids + test_user_ids)
-    all_creative_ids = set(train_creative_ids + test_creative_ids)
+    # all_creative_ids = set(train_creative_ids + test_creative_ids)
 
     print("训练数据中user id 个数：%d" % (len(train_userids))) #
     print("测试数据中user id 个数：%d" % (len(test_user_ids)))
     print("训练和测试数据中user id 总个数：%d" % (len(all_user_ids)))
     print("训练集和测试集中user id 交集个数 %d" % (len(all_user_ids) - (len(train_userids) + len(test_user_ids))))
 
-    print("训练数据中 creative_id 个数：%d" % (len(train_creative_ids)))
-    print("训练数据中 creative_id 个数：%d" % (len(test_creative_ids)))
-    print("训练和测试数据中 creative_id 总个数：%d" % (len(all_creative_ids)))
-    print("训练集和测试集中 creative_id 交集个数 %d" % (len(all_creative_ids) - (len(train_creative_ids) + len(test_creative_ids))))
+    # print("训练数据中 creative_id 个数：%d" % (len(train_creative_ids)))
+    # print("训练数据中 creative_id 个数：%d" % (len(test_creative_ids)))
+    # print("训练和测试数据中 creative_id 总个数：%d" % (len(all_creative_ids)))
+    # print("训练集和测试集中 creative_id 交集个数 %d" % (len(all_creative_ids) - (len(train_creative_ids) + len(test_creative_ids))))
 
     # 训练数据中user id 个数：900000
     # 测试数据中user id 个数：1000000
@@ -75,12 +78,12 @@ def get_nx_G():
 
     # 构造id字典
     user_id_dic = {'u%s'%(uid): index for index, uid in enumerate(all_user_ids)}
-    user_num = len(all_user_ids)
-    creative_id_dic = {'c%s'%(cid): (user_num + index) for index, cid in enumerate(all_creative_ids)}
+    # user_num = len(all_user_ids)
+    # creative_id_dic = {'c%s'%(cid): (user_num + index) for index, cid in enumerate(all_creative_ids)}
 
     # 合并用户字典和广告字典
-    id_map = {**user_id_dic, **creative_id_dic}
-    print("id_map keys number: %d" % (len(id_map.keys()))) # 5312772
+    id_map = user_id_dic
+    print("id_map keys number: %d" % (len(id_map.keys())))
 
     # 构造节点label 字典
     age_class_map = {}
@@ -158,12 +161,10 @@ def build_graph():
     print("构建图。。。")
     G = nx.Graph()
     print("添加节点。。。")
-    print("节点数：%d" % (len(node_atts)))
     for node, att in node_atts.items():
         G.add_node(node, att)
 
     print("添加边。。。")
-    print("边数：%d" % (len(edge_dic)))
     for key, w in edge_dic.items():
         ns = key.split('_')
         node1 = ns[0]
@@ -183,5 +184,5 @@ def build_graph():
 
 
 if __name__ == '__main__':
-    # get_nx_G()
+    get_nx_G()
     build_graph()

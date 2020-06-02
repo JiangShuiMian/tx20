@@ -212,7 +212,13 @@ class NodeMinibatchIterator(object):
         self.no_train_nodes_set = set(self.val_nodes + self.test_nodes)
         self.train_nodes = set(G.nodes()).difference(self.no_train_nodes_set)
         # don't train on nodes that only have edges to test set
+        print("train nodes length: %d" % (len(self.train_nodes)))
         self.train_nodes = [n for n in self.train_nodes if self.deg[id2idx[n]] > 0]
+
+        print("train nodes (deg > 0) length: %d" % (len(self.train_nodes)))
+        print("test nodes length: %d" % (len(self.test_nodes)))
+        print("val nodes length: %d" % (len(self.val_nodes)))
+
 
     def _make_label_vec(self, node):
         label = self.label_map[node]
@@ -225,15 +231,13 @@ class NodeMinibatchIterator(object):
         return label_vec
 
     def construct_adj(self):
-        adj = len(self.id2idx)*np.ones((len(self.id2idx)+1, self.max_degree))
+        adj = len(self.id2idx) * np.ones((len(self.id2idx)+1, self.max_degree))
         deg = np.zeros((len(self.id2idx),))
 
         for nodeid in self.G.nodes():
             if self.G.node[nodeid]['test'] or self.G.node[nodeid]['val']:
                 continue
-            neighbors = np.array([self.id2idx[neighbor] 
-                for neighbor in self.G.neighbors(nodeid)
-                if (not self.G[nodeid][neighbor]['train_removed'])])
+            neighbors = np.array([self.id2idx[neighbor] for neighbor in self.G.neighbors(nodeid) if (not self.G[nodeid][neighbor]['train_removed'])])
             deg[self.id2idx[nodeid]] = len(neighbors)
             if len(neighbors) == 0:
                 continue
@@ -247,8 +251,7 @@ class NodeMinibatchIterator(object):
     def construct_test_adj(self):
         adj = len(self.id2idx)*np.ones((len(self.id2idx)+1, self.max_degree))
         for nodeid in self.G.nodes():
-            neighbors = np.array([self.id2idx[neighbor] 
-                for neighbor in self.G.neighbors(nodeid)])
+            neighbors = np.array([self.id2idx[neighbor] for neighbor in self.G.neighbors(nodeid)])
             if len(neighbors) == 0:
                 continue
             if len(neighbors) > self.max_degree:
@@ -289,8 +292,8 @@ class NodeMinibatchIterator(object):
             val_nodes = self.test_nodes
         else:
             val_nodes = self.val_nodes
-        val_node_subset = val_nodes[iter_num*size:min((iter_num+1)*size, 
-            len(val_nodes))]
+
+        val_node_subset = val_nodes[iter_num*size:min((iter_num+1)*size, len(val_nodes))]
 
         # add a dummy neighbor
         ret_val = self.batch_feed_dict(val_node_subset)

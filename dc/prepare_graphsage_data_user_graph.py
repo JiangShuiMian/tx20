@@ -77,12 +77,7 @@ def get_nx_G():
     # 训练集和测试集中 creative_id 交集个数 -1686522
 
     # 构造id字典
-    user_id_dic = {'u%s'%(uid): index for index, uid in enumerate(all_user_ids)}
-    # user_num = len(all_user_ids)
-    # creative_id_dic = {'c%s'%(cid): (user_num + index) for index, cid in enumerate(all_creative_ids)}
-
-    # 合并用户字典和广告字典
-    id_map = user_id_dic
+    id_map = {'u%s'%(uid): index for index, uid in enumerate(all_user_ids)}
     print("id_map keys number: %d" % (len(id_map.keys())))
 
     # 构造节点label 字典
@@ -90,11 +85,35 @@ def get_nx_G():
     gender_class_map = {}
     for user_info in user_df.iterrows():
         user_id = user_info[1]['user_id']
-        key = "u%s"%(user_id)
+        key = "u%s" % (user_id)
         age = user_info[1]['age']
         gender = user_info[1]['gender']
         age_class_map[key] = int(age)
         gender_class_map[key] = int(gender)
+
+    # 补全所有ids
+    for maped_id in id_map.keys():
+        age_class_map.setdefault(maped_id, 0)
+        gender_class_map.setdefault(maped_id, 0)
+
+    # 保存id-map
+    with open(id_map_file_age, 'w') as f:
+        f.write(json.dumps(id_map))
+
+    with open(id_map_file_gender, 'w') as f:
+        f.write(json.dumps(id_map))
+    print("保存id_map完成")
+
+    # 保存class-map
+    with open(class_map_file_age, 'w') as f:
+        f.write(json.dumps(age_class_map))
+
+    with open(class_map_file_gender, 'w') as f:
+        f.write(json.dumps(gender_class_map))
+
+    print("保存age_class_map完成")
+    print("保存gender_class_map完成")
+    print("保存节点属性数据")
 
     # 构造节点属性，train，val， test 字典
     random.shuffle(train_userids)
@@ -113,37 +132,6 @@ def get_nx_G():
 
     for nd in test_user_ids:
         node_atts.setdefault("u%s" % (nd), {'val': False, 'test': True})
-
-    # 补全所有ids
-    for maped_id in id_map.keys():
-        age_class_map.setdefault(maped_id, 0)
-        gender_class_map.setdefault(maped_id, 0)
-        # node_atts.setdefault(maped_id, {'val': False, 'test': True})
-
-    # 保存id-map
-    with open(id_map_file_age, 'w') as f:
-        f.write(json.dumps(id_map))
-
-    with open(id_map_file_gender, 'w') as f:
-        f.write(json.dumps(id_map))
-    del id_map
-    print("保存id_map完成")
-
-    # 保存class-map
-    with open(class_map_file_age, 'w') as f:
-        f.write(json.dumps(age_class_map))
-
-    with open(class_map_file_gender, 'w') as f:
-        f.write(json.dumps(gender_class_map))
-    # del age_class_map
-    # del gender_class_map
-    # del user_df
-    # del train_pairs
-    # del test_pairs
-    # del train_userids
-    print("保存age_class_map完成")
-    print("保存gender_class_map完成")
-    print("保存节点属性数据")
 
     # 保存节点属性
     with open(nodes_dic_file, 'w') as f:

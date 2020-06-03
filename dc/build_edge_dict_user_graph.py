@@ -33,10 +33,14 @@ test_pairs_creativeids = list(test_pairs['creative_id'])
 userids = train_pairs_userids + test_pairs_userids
 creativeids = train_pairs_creativeids + test_pairs_creativeids
 
+# i = 0
 for index, user_id in enumerate(userids):
     creative_id = creativeids[index]
     uids = creative_id_user_list.setdefault(creative_id, set())
     uids.add(user_id)
+    # i += 1
+    # if i > 1000000:
+    #     break
 
 print("构造广告用户字典完成")
 
@@ -49,14 +53,18 @@ print("构造广告用户字典完成")
 #         break
 
 edge_dic = {}
+edges = set()
 for _, uids in creative_id_user_list.items():
     if len(uids) <= 1:
         continue
 
     for us in combinations(uids, 2):
         edge = "u%s_u%s" % (us[0], us[1])
-        weight = edge_dic.setdefault(edge, 0)
-        edge_dic[edge] = weight + 1
+        # weight = edge_dic.setdefault(edge, 0)
+        # edge_dic[edge] = weight + 1
+        edges.add(edge)
+
+print('edge number: %d' % (len(edge_dic)))
 
 
 with open(os.path.join(graphsage_data_path_user_graph, "edges.json"), 'w') as f:

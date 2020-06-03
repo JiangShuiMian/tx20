@@ -105,6 +105,8 @@ count = collections.Counter(uid_pair_list)
 print('count number: %d ' % (len(count)))
 print(count.most_common(10))
 
+for up, w in count.most_common():
+    edge_dic[up] = w
 
 print('edge number: %d' % (len(edge_dic)))
 

@@ -253,4 +253,5 @@ def g_test():
 if __name__ == '__main__':
     # get_nx_G()
     # build_edges()
-    build_graph()
+    # build_graph()
+    g_test()

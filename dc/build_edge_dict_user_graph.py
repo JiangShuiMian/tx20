@@ -30,6 +30,9 @@ train_pairs_creativeids = list(train_pairs['creative_id'])
 test_pairs_userids = list(test_pairs['user_id'])
 test_pairs_creativeids = list(test_pairs['creative_id'])
 
+del train_pairs
+del test_pairs
+
 userids = train_pairs_userids + test_pairs_userids
 creativeids = train_pairs_creativeids + test_pairs_creativeids
 
@@ -43,6 +46,8 @@ for index, user_id in enumerate(userids):
     #     break
 
 print("构造广告用户字典完成")
+del userids
+del creativeids
 
 # i = 0
 # for key, value in creative_id_user_list.items():
@@ -54,15 +59,29 @@ print("构造广告用户字典完成")
 
 edge_dic = {}
 edges = set()
+# for _, uids in creative_id_user_list.items():
+#     if len(uids) <= 1:
+#         continue
+#
+#     for us in combinations(uids, 2):
+#         edge = "u%s_u%s" % (us[0], us[1])
+#         # weight = edge_dic.setdefault(edge, 0)
+#         # edge_dic[edge] = weight + 1
+#         edges.add(edge)
+
 for _, uids in creative_id_user_list.items():
     if len(uids) <= 1:
         continue
 
-    for us in combinations(uids, 2):
-        edge = "u%s_u%s" % (us[0], us[1])
-        # weight = edge_dic.setdefault(edge, 0)
-        # edge_dic[edge] = weight + 1
-        edges.add(edge)
+    uids = list(uids)
+    uid_num = len(uids)
+
+    for i in range(0, uid_num-1):
+        for j in range(i+1, uid_num):
+            edge = "u%s_u%s" % (uids[i], uids[j])
+            weight = edge_dic.setdefault(edge, 0)
+            edge_dic[edge] = weight + 1
+            # edges.add(edge)
 
 print('edge number: %d' % (len(edge_dic)))
 

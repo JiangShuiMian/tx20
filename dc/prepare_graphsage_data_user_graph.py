@@ -173,4 +173,4 @@ def build_graph():
 
 if __name__ == '__main__':
     get_nx_G()
-    build_graph()
+    # build_graph()

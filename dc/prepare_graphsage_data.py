@@ -60,7 +60,7 @@ def get_nx_G():
     print("训练集和测试集中user id 交集个数 %d" % (len(all_user_ids) - (len(train_userids) + len(test_user_ids))))
 
     print("训练数据中 creative_id 个数：%d" % (len(train_creative_ids)))
-    print("训练数据中 creative_id 个数：%d" % (len(test_creative_ids)))
+    print("测试数据中 creative_id 个数：%d" % (len(test_creative_ids)))
     print("训练和测试数据中 creative_id 总个数：%d" % (len(all_creative_ids)))
     print("训练集和测试集中 creative_id 交集个数 %d" % (len(all_creative_ids) - (len(train_creative_ids) + len(test_creative_ids))))
 

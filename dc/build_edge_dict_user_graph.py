@@ -16,8 +16,8 @@ test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 cols = ['user_id', 'creative_id']
 
-train_pairs = pd.read_csv(trian_click_log_data, encoding='utf-8', dtype=object)[cols]
-test_pairs = pd.read_csv(test_click_log_data, encoding='utf-8', dtype=object)[cols]
+train_pairs = pd.read_csv(trian_click_log_data, encoding='utf-8', dtype=int)[cols]
+test_pairs = pd.read_csv(test_click_log_data, encoding='utf-8', dtype=int)[cols]
 print("训练数据大小: %d" % (train_pairs.shape[0]))
 print("测试数据大小: %d" % (test_pairs.shape[0]))
 
@@ -46,6 +46,7 @@ for index, user_id in enumerate(userids):
     #     break
 
 print("构造广告用户字典完成")
+print(len(creative_id_user_list))
 del userids
 del creativeids
 
@@ -69,30 +70,39 @@ edges = set()
 #         # edge_dic[edge] = weight + 1
 #         edges.add(edge)
 
-for _, uids in creative_id_user_list.items():
+uid_pair_list = []
+
+for _, us in creative_id_user_list.items():
     if len(uids) <= 1:
         continue
 
-    uids = list(uids)
+    uids = list(sorted(us))
+    del us
     uid_num = len(uids)
 
     for i in range(0, uid_num-1):
         for j in range(i+1, uid_num):
-            edge1 = "u%s_u%s" % (uids[i], uids[j])
-            edge2 = "u%s_u%s" % (uids[j], uids[i])
-            edge = None
-
-            if edge_dic.get(edge1) is not None:
-                edge = edge1
-            if edge_dic.get(edge2) is not None:
-                edge = edge2
-
-            if edge is None:
-                edge_dic[edge1] = 1
-            else:
-                weight = edge_dic.setdefault(edge, 0)
-                edge_dic[edge] = weight + 1
+            edge1 = "u%d_u%d" % (uids[i], uids[j])
+            # edge2 = "u%s_u%s" % (uids[j], uids[i])
+            # edge = None
+            #
+            # if edge_dic.get(edge1) is not None:
+            #     edge = edge1
+            # if edge_dic.get(edge2) is not None:
+            #     edge = edge2
+            #
+            # if edge is None:
+            #     edge_dic[edge1] = 1
+            # else:
+            #     weight = edge_dic.setdefault(edge, 0)
+            #     edge_dic[edge] = weight + 1
             # edges.add(edge)
+            uid_pair_list.append(edge1)
+
+import collections
+count = []
+count.extend(collections.Counter(uid_pair_list))
+print(count[0:100])
 
 print('edge number: %d' % (len(edge_dic)))
 

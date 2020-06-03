@@ -99,16 +99,17 @@ for _, us in creative_id_user_list.items():
             # edges.add(edge)
             uid_pair_list.append(edge1)
 
-print('uid_pair_list number: %d ' % (len(uid_pair_list)))
+print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 6159459
 import collections
 count = collections.Counter(uid_pair_list)
-print('count number: %d ' % (len(count)))
+print('count number: %d ' % (len(count))) # 6133343
 print(count.most_common(10))
+# [('u309204_u3426227', 3), ('u528_u11721', 2), ('u528_u30920', 2), ('u528_u32023', 2), ('u528_u36187', 2), ('u528_u56768', 2), ('u528_u73408', 2), ('u528_u81211', 2), ('u528_u83776', 2), ('u528_u93292', 2)]
 
 for up, w in count.most_common():
     edge_dic[up] = w
 
-print('edge number: %d' % (len(edge_dic)))
+print('edge number: %d' % (len(edge_dic))) # 6133343
 
 
 with open(os.path.join(graphsage_data_path_user_graph, "edges.json"), 'w') as f:

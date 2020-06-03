@@ -247,7 +247,10 @@ def g_test():
     """
     G_data = json.load(open(g_file_age))
     G = json_graph.node_link_graph(G_data)
-    print(list(nx.isolates(G)))
+    all_nodes = G.nodes()
+    print("all node number: %d" % (len(all_nodes)))
+    isolates_node = list(nx.isolates(G))
+    print('isolates_node number: %d' % (len(isolates_node)))
 
 
 if __name__ == '__main__':

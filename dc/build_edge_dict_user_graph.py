@@ -78,9 +78,20 @@ for _, uids in creative_id_user_list.items():
 
     for i in range(0, uid_num-1):
         for j in range(i+1, uid_num):
-            edge = "u%s_u%s" % (uids[i], uids[j])
-            weight = edge_dic.setdefault(edge, 0)
-            edge_dic[edge] = weight + 1
+            edge1 = "u%s_u%s" % (uids[i], uids[j])
+            edge2 = "u%s_u%s" % (uids[j], uids[i])
+            edge = None
+
+            if edge_dic.get(edge1) is not None:
+                edge = edge1
+            if edge_dic.get(edge2) is not None:
+                edge = edge2
+
+            if edge is None:
+                edge_dic[edge1] = 1
+            else:
+                weight = edge_dic.setdefault(edge, 0)
+                edge_dic[edge] = weight + 1
             # edges.add(edge)
 
 print('edge number: %d' % (len(edge_dic)))

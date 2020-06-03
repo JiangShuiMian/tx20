@@ -139,9 +139,9 @@ def get_nx_G():
 
 
 def build_edges():
-
-    trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
-    test_click_log_data = os.path.join(o_test_data, "click_log.csv")
+    #
+    # trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
+    # test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
     cols = ['user_id', 'creative_id']
 
@@ -183,7 +183,7 @@ def build_edges():
             continue
 
         uids = list(sorted(us))
-        del us
+        # del us
         uid_num = len(uids)
 
         for i in range(0, uid_num-1):
@@ -240,8 +240,17 @@ def build_graph():
         g_dic = json_graph.node_link_data(G)
         f.write(json.dumps(g_dic))
 
+def g_test():
+    """
+    分析图
+    :return:
+    """
+    G_data = json.load(open(g_file_age))
+    G = json_graph.node_link_graph(G_data)
+    print(list(nx.isolates(G)))
+
 
 if __name__ == '__main__':
-    get_nx_G()
-    build_edges()
+    # get_nx_G()
+    # build_edges()
     build_graph()

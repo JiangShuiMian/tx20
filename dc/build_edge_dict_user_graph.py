@@ -99,10 +99,12 @@ for _, us in creative_id_user_list.items():
             # edges.add(edge)
             uid_pair_list.append(edge1)
 
+print('uid_pair_list number: %d ' % (len(uid_pair_list)))
 import collections
-count = []
-count.extend(collections.Counter(uid_pair_list))
-print(count[0:100])
+count = collections.Counter(uid_pair_list)
+print('count number: %d ' % (len(count)))
+print(count.most_common(10))
+
 
 print('edge number: %d' % (len(edge_dic)))
 

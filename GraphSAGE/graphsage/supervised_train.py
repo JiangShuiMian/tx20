@@ -39,7 +39,7 @@ flags.DEFINE_string("model_size", "small", "Can be big or small; model specific 
 flags.DEFINE_string('train_prefix', '', 'prefix identifying training data. must be specified.')
 
 # left to default values in main experiments 
-flags.DEFINE_integer('epochs', 10, 'number of epochs to train.')
+flags.DEFINE_integer('epochs', 2, 'number of epochs to train.')
 flags.DEFINE_float('dropout', 0.0, 'dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0.0, 'weight for l2 loss on embedding matrix.')
 flags.DEFINE_integer('max_degree', 32, 'maximum node degree. 最大邻居节点个数')
@@ -113,6 +113,7 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     finished = False
     while not finished:
         feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
+        print(feed_dict_val)
         nodes.append(feed_dict_val['batch1'])
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
         val_preds.append(node_outs_val[0])

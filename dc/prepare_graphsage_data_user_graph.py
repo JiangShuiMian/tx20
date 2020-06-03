@@ -138,13 +138,83 @@ def get_nx_G():
         f.write(json.dumps(node_atts))
 
 
+def build_edges():
+
+    trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
+    test_click_log_data = os.path.join(o_test_data, "click_log.csv")
+
+    cols = ['user_id', 'creative_id']
+
+    train_pairs = pd.read_csv(trian_click_log_data, encoding='utf-8', dtype=int)[cols]
+    test_pairs = pd.read_csv(test_click_log_data, encoding='utf-8', dtype=int)[cols]
+    print("训练数据大小: %d" % (train_pairs.shape[0]))
+    print("测试数据大小: %d" % (test_pairs.shape[0]))
+
+    creative_id_user_list = {}
+
+    print("读取训练数据中边。。。")
+
+    train_pairs_userids = list(train_pairs['user_id'])
+    train_pairs_creativeids = list(train_pairs['creative_id'])
+    test_pairs_userids = list(test_pairs['user_id'])
+    test_pairs_creativeids = list(test_pairs['creative_id'])
+
+    del train_pairs
+    del test_pairs
+
+    userids = train_pairs_userids + test_pairs_userids
+    creativeids = train_pairs_creativeids + test_pairs_creativeids
+
+    for index, user_id in enumerate(userids):
+        creative_id = creativeids[index]
+        uids = creative_id_user_list.setdefault(creative_id, set())
+        uids.add(user_id)
+
+    print("构造广告用户字典完成")
+    print(len(creative_id_user_list))
+    del userids
+    del creativeids
+
+    edge_dic = {}
+    uid_pair_list = []
+
+    for _, us in creative_id_user_list.items():
+        if len(uids) <= 1:
+            continue
+
+        uids = list(sorted(us))
+        del us
+        uid_num = len(uids)
+
+        for i in range(0, uid_num-1):
+            for j in range(i+1, uid_num):
+                edge1 = "u%d_u%d" % (uids[i], uids[j])
+                uid_pair_list.append(edge1)
+
+    print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 6159459
+    import collections
+    count = collections.Counter(uid_pair_list)
+    print('count number: %d ' % (len(count))) # 6133343
+    print(count.most_common(10))
+    # [('u309204_u3426227', 3), ('u528_u11721', 2), ('u528_u30920', 2), ('u528_u32023', 2), ('u528_u36187', 2), ('u528_u56768', 2), ('u528_u73408', 2), ('u528_u81211', 2), ('u528_u83776', 2), ('u528_u93292', 2)]
+
+    for up, w in count.most_common():
+        edge_dic[up] = w
+
+    print('edge number: %d' % (len(edge_dic))) # 6133343
+
+    with open(os.path.join(graphsage_data_path_user_graph, "edges.json"), 'w') as f:
+        f.write(json.dumps(edge_dic))
+
+
 def build_graph():
     with open(nodes_dic_file, 'r') as f:
         node_atts = json.load(f)
 
     with open(edges_dic_file, 'r') as f:
         edge_dic = json.load(f)
-    print(len(edge_dic.keys()))
+
+    print('edge number: %d' % (len(edge_dic.keys())))
 
     print("构建图。。。")
     G = nx.Graph()
@@ -173,4 +243,5 @@ def build_graph():
 
 if __name__ == '__main__':
     get_nx_G()
+    build_edges()
     build_graph()

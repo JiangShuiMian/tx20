@@ -41,9 +41,14 @@ def read_data():
     print_line("ad_data")
     loger.info("ad columns:")
     # ['creative_id', 'ad_id', 'product_id', 'product_category', 'advertiser_id', 'industry']
-    loger.info(ad_data.columns)
-    for col in ad_data.columns:
-        print_value_counts(ad_data, col)
+    # loger.info(ad_data.columns)
+    # for col in ad_data.columns:
+    #     print_value_counts(ad_data, col)
+
+    train_advertiser_ids = set(ad_data.advertiser_id.unique())
+    test_advertiser_ids = set(test_ad_data.advertiser_id.unique())
+    loger.info("diff advertiser_ids between train and test set number is: %d" % (len(train_advertiser_ids.difference(test_advertiser_ids))))
+
 
     click_data = pd.read_csv(os.path.join(o_train_data, "click_log.csv"), encoding='utf-8')
     print_line("click_data")

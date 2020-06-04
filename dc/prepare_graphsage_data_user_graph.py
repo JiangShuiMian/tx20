@@ -163,6 +163,7 @@ def build_edges():
     train_pairs = train_pairs[['user_id', 'advertiser_id']].rename({'advertiser_id': 'creative_id'})
     test_pairs = test_pairs[['user_id', 'advertiser_id']].rename({'advertiser_id': 'creative_id'})
 
+    print(train_pairs.columns)
 
     creative_id_user_list = {}
 

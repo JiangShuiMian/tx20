@@ -56,6 +56,8 @@ test_pairs_creativeids = list(test_pairs['advertiser_id'])
 
 del train_pairs
 del test_pairs
+del train_ad_data
+del test_ad_data
 
 userids = train_pairs_userids + test_pairs_userids
 creativeids = train_pairs_creativeids + test_pairs_creativeids

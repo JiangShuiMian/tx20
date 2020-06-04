@@ -12,6 +12,8 @@ from cfgs.config import o_train_data, o_test_data, graphsage_data_path_user_grap
 
 trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
 test_click_log_data = os.path.join(o_test_data, "click_log.csv")
+trian_ad_data_file = os.path.join(o_train_data, "ad.csv")
+test_ad_data_file = os.path.join(o_test_data, "ad.csv")
 
 train_user_data = os.path.join(o_train_data, "user.csv")
 edges_dic_file = os.path.join(graphsage_data_path_user_graph, 'edges.json') # 所有的边及权重
@@ -150,6 +152,16 @@ def build_edges():
     print("训练数据大小: %d" % (train_pairs.shape[0]))
     print("测试数据大小: %d" % (test_pairs.shape[0]))
 
+    train_ad_data = pd.read_csv(trian_ad_data_file, encoding='utf-8', dtype=int)
+    test_ad_data = pd.read_csv(test_ad_data_file, encoding='utf-8', dtype=int)
+
+    train_pairs = pd.merge(train_pairs, train_ad_data, how='left', on='creative_id')
+    test_pairs = pd.merge(test_pairs, test_ad_data, how='left', on='creative_id')
+
+    train_pairs = train_pairs[['user_id', 'advertiser_id']].rename({'advertiser_id': 'creative_id'})
+    test_pairs = test_pairs[['user_id', 'advertiser_id']].rename({'advertiser_id': 'creative_id'})
+
+
     creative_id_user_list = {}
 
     print("读取训练数据中边。。。")
@@ -240,6 +252,7 @@ def build_graph():
         g_dic = json_graph.node_link_data(G)
         f.write(json.dumps(g_dic))
 
+
 def g_test():
     """
     分析图
@@ -255,6 +268,6 @@ def g_test():
 
 if __name__ == '__main__':
     # get_nx_G()
-    # build_edges()
-    # build_graph()
+    build_edges()
+    build_graph()
     g_test()

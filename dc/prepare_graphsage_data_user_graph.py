@@ -152,8 +152,10 @@ def build_edges():
     print("训练数据大小: %d" % (train_pairs.shape[0]))
     print("测试数据大小: %d" % (test_pairs.shape[0]))
 
-    train_ad_data = pd.read_csv(trian_ad_data_file, encoding='utf-8', dtype=int)
-    test_ad_data = pd.read_csv(test_ad_data_file, encoding='utf-8', dtype=int)
+    train_ad_data = pd.read_csv(trian_ad_data_file, encoding='utf-8', dtype=object)
+    test_ad_data = pd.read_csv(test_ad_data_file, encoding='utf-8', dtype=object)
+    train_ad_data['creative_id'] = train_ad_data['creative_id'].astype(int)
+    test_ad_data['creative_id'] = test_ad_data['creative_id'].astype(int)
 
     train_pairs = pd.merge(train_pairs, train_ad_data, how='left', on='creative_id')
     test_pairs = pd.merge(test_pairs, test_ad_data, how='left', on='creative_id')

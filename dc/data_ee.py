@@ -36,6 +36,8 @@ def read_data():
         print_value_counts(user_data, col)
 
     ad_data = pd.read_csv(os.path.join(o_train_data, "ad.csv"), encoding='utf-8')
+    test_ad_data = pd.read_csv(os.path.join(o_test_data, "ad.csv"), encoding='utf-8')
+    ad_data = pd.concat([ad_data, test_ad_data])
     print_line("ad_data")
     loger.info("ad columns:")
     # ['creative_id', 'ad_id', 'product_id', 'product_category', 'advertiser_id', 'industry']
@@ -51,7 +53,7 @@ def read_data():
     for col in click_data.columns:
         print_value_counts(click_data, col)
 
-    test_ad_data = pd.read_csv(os.path.join(o_test_data, "ad.csv"), encoding='utf-8')
+
 
     test_click_data = pd.read_csv(os.path.join(o_test_data, "click_log.csv"), encoding='utf-8')
 

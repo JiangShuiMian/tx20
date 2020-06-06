@@ -160,8 +160,10 @@ def build_edges():
     train_pairs = pd.merge(train_pairs, train_ad_data, how='left', on='creative_id')
     test_pairs = pd.merge(test_pairs, test_ad_data, how='left', on='creative_id')
 
-    train_pairs = train_pairs[['user_id', 'advertiser_id']]
-    test_pairs = test_pairs[['user_id', 'advertiser_id']]
+    middle_col = 'product_category'
+
+    train_pairs = train_pairs[['user_id', middle_col]]
+    test_pairs = test_pairs[['user_id', middle_col]]
 
     print(train_pairs.columns)
 
@@ -170,9 +172,9 @@ def build_edges():
     print("读取训练数据中边。。。")
 
     train_pairs_userids = list(train_pairs['user_id'])
-    train_pairs_creativeids = list(train_pairs['advertiser_id'])
+    train_pairs_creativeids = list(train_pairs[middle_col])
     test_pairs_userids = list(test_pairs['user_id'])
-    test_pairs_creativeids = list(test_pairs['advertiser_id'])
+    test_pairs_creativeids = list(test_pairs[middle_col])
 
     del train_pairs
     del test_pairs
@@ -216,7 +218,7 @@ def build_edges():
     for up, w in count.most_common():
         edge_dic[up] = w
 
-    print('edge number: %d' % (len(edge_dic))) # 6133343
+    print('edge number: %d' % (len(edge_dic))) # 使用 cid时：6133343
 
     with open(os.path.join(graphsage_data_path_user_graph, "edges.json"), 'w') as f:
         f.write(json.dumps(edge_dic))

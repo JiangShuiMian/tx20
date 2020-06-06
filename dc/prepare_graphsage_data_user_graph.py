@@ -209,7 +209,7 @@ def build_edges():
         uids = list(sorted(us))
         # del us
         uid_num = len(uids)
-        print("%d : %d" % (cids, uid_num))
+        print("%d : %d : %d" % (cids, uid_num, len(ls)))
         cids += 1
 
         for i in range(0, uid_num-1):
@@ -218,8 +218,8 @@ def build_edges():
                 uid_pair_list.append(edge1)
                 ls.add(edge1)
                 index += 1
-                if index % 100000 == 0:
-                    print("%d: %d" % (index, len(ls)))
+                # if index % 100000 == 0:
+                #     print("%d: %d" % (index, len(ls)))
 
     print('edge num: %d' % (len(ls)))
     print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 6159459

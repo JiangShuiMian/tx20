@@ -197,7 +197,7 @@ def build_edges():
     uid_pair_list = []
     ls = set()
 
-    i = 0
+    index = 0
     for _, us in creative_id_user_list.items():
         if len(uids) <= 1:
             continue
@@ -205,14 +205,15 @@ def build_edges():
         uids = list(sorted(us))
         # del us
         uid_num = len(uids)
+        print(uid_num)
 
         for i in range(0, uid_num-1):
             for j in range(i+1, uid_num):
                 edge1 = "u%d_u%d" % (uids[i], uids[j])
                 # uid_pair_list.append(edge1)
                 ls.add(edge1)
-                i+=1
-                if i % 100000 == 0:
+                index += 1
+                if index % 100000 == 0:
                     print("%d: %d" % (i, len(ls)))
 
     print('edge num: %d' % (len(ls)))

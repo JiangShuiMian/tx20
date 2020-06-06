@@ -161,7 +161,7 @@ def build_edges():
     test_pairs = pd.merge(test_pairs, test_ad_data, how='left', on='creative_id')
 
     # middle_col = 'product_category'
-    middle_col = 'advertiser_id'
+    middle_col = 'creative_id'
 
     train_pairs = train_pairs[['user_id', middle_col]]
     test_pairs = test_pairs[['user_id', middle_col]]
@@ -199,7 +199,7 @@ def build_edges():
 
     index = 0
     for _, us in creative_id_user_list.items():
-        if len(uids) <= 1:
+        if len(us) <= 1:
             continue
 
         uids = list(sorted(us))
@@ -210,11 +210,11 @@ def build_edges():
         for i in range(0, uid_num-1):
             for j in range(i+1, uid_num):
                 edge1 = "u%d_u%d" % (uids[i], uids[j])
-                # uid_pair_list.append(edge1)
+                uid_pair_list.append(edge1)
                 ls.add(edge1)
                 index += 1
                 if index % 100000 == 0:
-                    print("%d: %d" % (i, len(ls)))
+                    print("%d: %d" % (index, len(ls)))
 
     print('edge num: %d' % (len(ls)))
     print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 6159459

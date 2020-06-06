@@ -213,8 +213,7 @@ def build_edges():
                 ls.add(edge1)
                 i+=1
                 if i % 100000 == 0:
-                    print(len(ls))
-
+                    print("%d: %d" % (i, len(ls)))
 
     print('edge num: %d' % (len(ls)))
     print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 6159459

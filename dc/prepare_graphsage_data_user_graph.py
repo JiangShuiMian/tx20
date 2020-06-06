@@ -172,16 +172,19 @@ def build_edges():
 
     print("读取训练数据中边。。。")
 
-    train_pairs_userids = list(train_pairs['user_id'])
-    train_pairs_creativeids = list(train_pairs[middle_col])
-    test_pairs_userids = list(test_pairs['user_id'])
-    test_pairs_creativeids = list(test_pairs[middle_col])
+    train_pairs_userids = list(train_pairs['user_id'].values)
+    train_pairs_creativeids = list(train_pairs[middle_col].values)
+    test_pairs_userids = list(test_pairs['user_id'].values)
+    test_pairs_creativeids = list(test_pairs[middle_col].values)
 
     del train_pairs
     del test_pairs
 
     userids = train_pairs_userids + test_pairs_userids
     creativeids = train_pairs_creativeids + test_pairs_creativeids
+
+    print(len(userids))
+    print(len(creativeids))
 
     for index, user_id in enumerate(userids):
         creative_id = creativeids[index]
@@ -198,6 +201,7 @@ def build_edges():
     ls = set()
 
     index = 0
+    cids = 0
     for _, us in creative_id_user_list.items():
         if len(us) <= 1:
             continue
@@ -205,7 +209,8 @@ def build_edges():
         uids = list(sorted(us))
         # del us
         uid_num = len(uids)
-        print(uid_num)
+        print("%d : %d" % (cids, uid_num))
+        cids += 1
 
         for i in range(0, uid_num-1):
             for j in range(i+1, uid_num):

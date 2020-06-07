@@ -145,7 +145,7 @@ def build_edges():
     # trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
     # test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
-    cols = ['user_id', 'creative_id']
+    cols = ['user_id', 'creative_id', 'click_times']
 
     train_pairs = pd.read_csv(trian_click_log_data, encoding='utf-8', dtype=int)[cols]
     test_pairs = pd.read_csv(test_click_log_data, encoding='utf-8', dtype=int)[cols]
@@ -163,8 +163,8 @@ def build_edges():
     # middle_col = 'product_category'
     middle_col = 'creative_id'
 
-    train_pairs = train_pairs[['user_id', middle_col]]
-    test_pairs = test_pairs[['user_id', middle_col]]
+    train_pairs = train_pairs[['user_id', middle_col, "click_times"]]
+    test_pairs = test_pairs[['user_id', middle_col, 'click_times']]
 
     print(train_pairs.columns)
 
@@ -177,24 +177,31 @@ def build_edges():
     test_pairs_userids = list(test_pairs['user_id'].values)
     test_pairs_creativeids = list(test_pairs[middle_col].values)
 
+    train_click_times = list(train_pairs['click_times'].values)
+    test_click_times = list(test_pairs['click_times'].values)
+
+
     del train_pairs
     del test_pairs
 
     userids = train_pairs_userids + test_pairs_userids
     creativeids = train_pairs_creativeids + test_pairs_creativeids
-
+    click_times = train_click_times + test_click_times
     print(len(userids))
     print(len(creativeids))
+    print(len(click_times))
 
     for index, user_id in enumerate(userids):
         creative_id = creativeids[index]
-        uids = creative_id_user_list.setdefault(creative_id, set())
-        uids.add(user_id)
+        click_time = click_times[index]
+        uids = creative_id_user_list.setdefault(creative_id, [])
+        uids.extend([user_id] * click_time)
 
     print("构造广告用户字典完成 key: %s, num : %d" % (middle_col, len(creative_id_user_list)))
     # print(len(creative_id_user_list))
     del userids
     del creativeids
+    del click_times
 
     edge_dic = {}
     uid_pair_list = []
@@ -202,30 +209,42 @@ def build_edges():
 
     index = 0
     cids = 0
+    import collections
     for _, us in creative_id_user_list.items():
         if len(us) <= 1:
             continue
 
-        uids = list(sorted(us))
+        uids = [x[0] for x in collections.Counter(us).most_common()]
+
+        if len(uids) <= 1:
+            continue
+
+        # uids = [x[0] for x in sorted(us, key=lambda x: x[1], reverse=True)] # 降序
         # del us
         uid_num = len(uids)
         print("%d : %d : %d" % (cids, uid_num, len(ls)))
         cids += 1
 
-        for i in range(0, uid_num-1):
-            for j in range(i+1, uid_num):
-                edge1 = "u%d_u%d" % (uids[i], uids[j])
-                uid_pair_list.append(edge1)
-                ls.add(edge1)
-                index += 1
+        m_node = uids[0] # 使用第一个节点代替cid
+        for n in uids[1:]:
+            up = list(sorted([m_node, n]))
+            edge = "u%d_u%d" % (up[0], up[1])
+            uid_pair_list.append(edge)
+
+        # for i in range(0, uid_num-1):
+        #     for j in range(i+1, uid_num):
+        #         edge1 = "u%d_u%d" % (uids[i], uids[j])
+        #         uid_pair_list.append(edge1)
+        #         ls.add(edge1)
+        #         index += 1
                 # if index % 100000 == 0:
                 #     print("%d: %d" % (index, len(ls)))
 
     print('edge num: %d' % (len(ls)))
-    print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 6159459
+    print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 54960296
     import collections
     count = collections.Counter(uid_pair_list)
-    print('count number: %d ' % (len(count))) # 6133343
+    print('count number: %d ' % (len(count))) # 46999299
     print(count.most_common(10))
     # [('u309204_u3426227', 3), ('u528_u11721', 2), ('u528_u30920', 2), ('u528_u32023', 2), ('u528_u36187', 2), ('u528_u56768', 2), ('u528_u73408', 2), ('u528_u81211', 2), ('u528_u83776', 2), ('u528_u93292', 2)]
 

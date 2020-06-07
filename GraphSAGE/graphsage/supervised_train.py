@@ -81,7 +81,7 @@ def save_predict_res(preds, nodes):
 
     res = []
     for index, node in enumerate(nodes):
-        tmp = "%d %d" % (node, preds[index])
+        tmp = "%s %d" % (node.replace('u', ''), preds[index])
         res.append(tmp)
 
     with open(res_file, 'w') as f:
@@ -129,7 +129,7 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     finished = False
     while not finished:
         feed_dict_val, batch_labels, finished, val_node_subset = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
-        print(feed_dict_val)
+        # print(feed_dict_val)
         # nodes.extend(minibatch_iter.placeholders['batch'].eval(sess)) # node index list
         nodes.extend(val_node_subset)
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)

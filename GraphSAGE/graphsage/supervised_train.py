@@ -58,11 +58,12 @@ flags.DEFINE_integer('identity_dim', 200, 'Set to positive value to use identity
 flags.DEFINE_string('base_log_dir', '.', 'base directory for logging and saving embeddings')
 flags.DEFINE_integer('validate_iter', 1000, "how often to run a validation minibatch.")
 flags.DEFINE_integer('validate_batch_size', 1024, "how many nodes per validation sample.")
-flags.DEFINE_integer('gpu', 1, "which gpu to use.")
+flags.DEFINE_integer('gpu', 7, "which gpu to use.")
 flags.DEFINE_integer('print_every', 1000, "How often to print training info.")
-flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
+# flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
+flags.DEFINE_integer('max_total_steps', 10, "Maximum total number of iterations")
 
-os.environ["CUDA_VISIBLE_DEVICES"]=str(FLAGS.gpu)
+os.environ["CUDA_VISIBLE_DEVICES"] = str(FLAGS.gpu)
 
 GPU_MEM_FRACTION = 0.8
 
@@ -70,8 +71,15 @@ GPU_MEM_FRACTION = 0.8
 # 保存预测结果
 def save_predict_res(preds, nodes):
     res_file = FLAGS.res_file_name
-    print(preds)
-    print(nodes)
+    preds = np.argmax(preds, axis=1) + 1
+
+    res = []
+    for index, node in enumerate(nodes):
+        tmp = "%d %d" % (node, preds[index])
+        res.append(tmp)
+
+    with open(res_file, 'w') as f:
+        f.writelines(res)
 
 
 def calc_f1(y_true, y_pred):
@@ -116,7 +124,7 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     while not finished:
         feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
         print(feed_dict_val)
-        nodes.append(minibatch_iter.placeholders['batch'])
+        nodes.extend(minibatch_iter.placeholders['batch']) # node index list
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
         val_preds.append(node_outs_val[0])
         labels.append(batch_labels)
@@ -126,7 +134,7 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     labels = np.vstack(labels)
 
     if test == True:
-        nodes = np.vstack(nodes)
+        # nodes = np.vstack(nodes)
         save_predict_res(val_preds, nodes)
 
     f1_scores = calc_f1(labels, val_preds)
@@ -138,6 +146,7 @@ def construct_placeholders(num_classes):
     placeholders = {
         'labels': tf.placeholder(tf.float32, shape=(None, num_classes), name='labels'),
         'batch': tf.placeholder(tf.int32, shape=(None), name='batch1'),
+        # 'batchid': tf.placeholder(tf.int32, shape=(None), name='batchid'),
         'dropout': tf.placeholder_with_default(0., shape=(), name='dropout'),
         'batch_size': tf.placeholder(tf.int32, name='batch_size'),
     }

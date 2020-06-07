@@ -294,7 +294,6 @@ def build_graph():
     print("save gender G done.")
 
 
-
 def g_test():
     """
     分析图

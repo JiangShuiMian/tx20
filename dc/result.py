@@ -25,7 +25,7 @@ with open(res_age_pred_file, 'r') as f:
     for line in f.readlines():
         up = line.split(' ')
         user_index = int(up[0])
-        pred = int(up[1]) + 1
+        pred = int(up[1])
         user_id = index2user_map.get(user_index)
         res_pred_dic.setdefault(user_id, {"predicted_age": pred})
 
@@ -33,7 +33,7 @@ with open(res_gender_pred_file, 'r') as f:
     for line in f.readlines():
         up = line.split(' ')
         user_index = int(up[0])
-        pred = int(up[1]) + 1
+        pred = int(up[1])
         user_id = index2user_map.get(user_index)
         user_val = res_pred_dic.get(user_id)
         user_val['predicted_gender'] = pred

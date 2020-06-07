@@ -272,6 +272,7 @@ class NodeMinibatchIterator(object):
         feed_dict = dict()
         feed_dict.update({self.placeholders['batch_size']: len(batch1)})
         feed_dict.update({self.placeholders['batch']: batch1})
+        # feed_dict.update({self.placeholders['batchid']: batch1id}) # 保存原始节点id
         feed_dict.update({self.placeholders['labels']: labels})
 
         return feed_dict, labels

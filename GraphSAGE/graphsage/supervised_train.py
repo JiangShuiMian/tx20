@@ -40,7 +40,7 @@ flags.DEFINE_string('train_prefix', '', 'prefix identifying training data. must 
 flags.DEFINE_string('res_file_name', '', 'result file save to')
 
 # left to default values in main experiments 
-flags.DEFINE_integer('epochs', 1, 'number of epochs to train.')
+flags.DEFINE_integer('epochs', 10, 'number of epochs to train.')
 flags.DEFINE_float('dropout', 0.0, 'dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0.0, 'weight for l2 loss on embedding matrix.')
 flags.DEFINE_integer('max_degree', 32, 'maximum node degree. 最大邻居节点个数')
@@ -60,8 +60,8 @@ flags.DEFINE_integer('validate_iter', 1000, "how often to run a validation minib
 flags.DEFINE_integer('validate_batch_size', 1024, "how many nodes per validation sample.")
 flags.DEFINE_integer('gpu', 7, "which gpu to use.")
 flags.DEFINE_integer('print_every', 1000, "How often to print training info.")
-# flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
-flags.DEFINE_integer('max_total_steps', 10, "Maximum total number of iterations")
+flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
+# flags.DEFINE_integer('max_total_steps', 10, "Maximum total number of iterations")
 
 os.environ["CUDA_VISIBLE_DEVICES"] = str(FLAGS.gpu)
 
@@ -76,8 +76,11 @@ def save_predict_res(preds, nodes):
     :param nodes: user id
     :return:
     """
+    print("save_predict_res user id num: %d" % (len(nodes)))
+    print(preds.shape)
+
     res_file = FLAGS.res_file_name
-    preds = np.argmax(preds, axis=1) + 1
+    preds = np.argmax(preds, axis=1) + 1  # 构造label时 -1 ，最终结果 +1
 
     res = []
     for index, node in enumerate(nodes):
@@ -85,7 +88,7 @@ def save_predict_res(preds, nodes):
         res.append(tmp)
 
     with open(res_file, 'w') as f:
-        f.writelines(res)
+        f.write("\n".join(res))
 
 
 def calc_f1(y_true, y_pred):
@@ -153,7 +156,6 @@ def construct_placeholders(num_classes):
     placeholders = {
         'labels': tf.placeholder(tf.float32, shape=(None, num_classes), name='labels'),
         'batch': tf.placeholder(tf.int32, shape=(None), name='batch1'),
-        # 'batchid': tf.placeholder(tf.int32, shape=(None), name='batchid'),
         'dropout': tf.placeholder_with_default(0., shape=(), name='dropout'),
         'batch_size': tf.placeholder(tf.int32, name='batch_size'),
     }

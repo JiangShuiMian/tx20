@@ -116,7 +116,7 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     while not finished:
         feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
         print(feed_dict_val)
-        nodes.append(feed_dict_val[minibatch_iter.placeholders['batch']])
+        nodes.append(minibatch_iter.placeholders['batch'])
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
         val_preds.append(node_outs_val[0])
         labels.append(batch_labels)

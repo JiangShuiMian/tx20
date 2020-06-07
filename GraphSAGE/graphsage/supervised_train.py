@@ -70,6 +70,12 @@ GPU_MEM_FRACTION = 0.8
 
 # 保存预测结果
 def save_predict_res(preds, nodes):
+    """
+
+    :param preds:
+    :param nodes: user id
+    :return:
+    """
     res_file = FLAGS.res_file_name
     preds = np.argmax(preds, axis=1) + 1
 
@@ -122,9 +128,10 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     iter_num = 0
     finished = False
     while not finished:
-        feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
+        feed_dict_val, batch_labels, finished, val_node_subset = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
         print(feed_dict_val)
-        nodes.extend(minibatch_iter.placeholders['batch'].eval(sess)) # node index list
+        # nodes.extend(minibatch_iter.placeholders['batch'].eval(sess)) # node index list
+        nodes.extend(val_node_subset)
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
         val_preds.append(node_outs_val[0])
         labels.append(batch_labels)

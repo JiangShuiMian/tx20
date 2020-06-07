@@ -90,10 +90,10 @@ def get_nx_G():
         key = "u%s" % (user_id)
         age = user_info[1]['age']
         gender = user_info[1]['gender']
-        age_class_map[key] = int(age)
-        gender_class_map[key] = int(gender)
+        age_class_map[key] = int(age) - 1 # 原始数据都是从1开始，设置为从0开始，算法好搞
+        gender_class_map[key] = int(gender) - 1
 
-    # 补全所有ids
+    # 补全所有ids, 测试数据中的user id 的 class 全部设置为1
     for maped_id in id_map.keys():
         age_class_map.setdefault(maped_id, 0)
         gender_class_map.setdefault(maped_id, 0)
@@ -119,7 +119,7 @@ def get_nx_G():
 
     # 构造节点属性，train，val， test 字典
     random.shuffle(train_userids)
-    num_val = int(0.2 * len(train_userids))
+    num_val = int(0.1 * len(train_userids))
     val_nodes = train_userids[0:num_val]
     train_nodes = train_userids[num_val:]
 
@@ -179,7 +179,6 @@ def build_edges():
 
     train_click_times = list(train_pairs['click_times'].values)
     test_click_times = list(test_pairs['click_times'].values)
-
 
     del train_pairs
     del test_pairs
@@ -266,13 +265,13 @@ def build_graph():
 
     print('edge number: %d' % (len(edge_dic.keys())))
 
-    print("构建图。。。")
+    print("build graph ...")
     G = nx.Graph()
-    print("添加节点。。。")
+    print("add nodes ...")
     for node, att in node_atts.items():
         G.add_node(node, att)
 
-    print("添加边。。。")
+    print("add edges ...")
     for key, w in edge_dic.items():
         ns = key.split('_')
         node1 = ns[0]
@@ -281,14 +280,19 @@ def build_graph():
         # G.add_node(node2, **node_atts.setdefault(node2, {'val': False, 'test': True}))
         G.add_edge(node1, node2, weight=w)
 
+    print("add edges done.")
     # 保存图到json
     with open(g_file_age, 'w') as f:
         g_dic = json_graph.node_link_data(G)
         f.write(json.dumps(g_dic))
 
+    print("save age G done.")
+
     with open(g_file_gender, 'w') as f:
         g_dic = json_graph.node_link_data(G)
         f.write(json.dumps(g_dic))
+    print("save gender G done.")
+
 
 
 def g_test():
@@ -305,7 +309,7 @@ def g_test():
 
 
 if __name__ == '__main__':
-    # get_nx_G()
-    build_edges()
-    build_graph()
-    g_test()
+    get_nx_G()
+    # build_edges()
+    # build_graph()
+    # g_test()

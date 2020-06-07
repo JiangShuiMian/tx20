@@ -1,0 +1,1 @@
+python -m graphsage.supervised_train --train_prefix /home/wangqiang/wq/x/tx20/datas/gs_datas_user_graph/tx-2020-gender  --res_file_name /home/wangqiang/wq/x/tx20/res/gender_pred.txt --model graphsage_mean --sigmoid

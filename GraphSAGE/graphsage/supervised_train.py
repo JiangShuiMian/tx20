@@ -37,9 +37,10 @@ flags.DEFINE_string('model', 'graphsage_mean', 'model names. See README for poss
 flags.DEFINE_float('learning_rate', 0.01, 'initial learning rate.')
 flags.DEFINE_string("model_size", "small", "Can be big or small; model specific def'ns")
 flags.DEFINE_string('train_prefix', '', 'prefix identifying training data. must be specified.')
+flags.DEFINE_string('res_file_name', '', 'result file save to')
 
 # left to default values in main experiments 
-flags.DEFINE_integer('epochs', 2, 'number of epochs to train.')
+flags.DEFINE_integer('epochs', 1, 'number of epochs to train.')
 flags.DEFINE_float('dropout', 0.0, 'dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0.0, 'weight for l2 loss on embedding matrix.')
 flags.DEFINE_integer('max_degree', 32, 'maximum node degree. 最大邻居节点个数')
@@ -56,9 +57,9 @@ flags.DEFINE_integer('identity_dim', 200, 'Set to positive value to use identity
 #logging, saving, validation settings etc.
 flags.DEFINE_string('base_log_dir', '.', 'base directory for logging and saving embeddings')
 flags.DEFINE_integer('validate_iter', 1000, "how often to run a validation minibatch.")
-flags.DEFINE_integer('validate_batch_size', 256, "how many nodes per validation sample.")
+flags.DEFINE_integer('validate_batch_size', 1024, "how many nodes per validation sample.")
 flags.DEFINE_integer('gpu', 1, "which gpu to use.")
-flags.DEFINE_integer('print_every', 5, "How often to print training info.")
+flags.DEFINE_integer('print_every', 1000, "How often to print training info.")
 flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
 
 os.environ["CUDA_VISIBLE_DEVICES"]=str(FLAGS.gpu)
@@ -68,6 +69,7 @@ GPU_MEM_FRACTION = 0.8
 
 # 保存预测结果
 def save_predict_res(preds, nodes):
+    res_file = FLAGS.res_file_name
     print(preds)
     print(nodes)
 
@@ -114,7 +116,7 @@ def incremental_evaluate(sess, model, minibatch_iter, size, test=False):
     while not finished:
         feed_dict_val, batch_labels, finished, _ = minibatch_iter.incremental_node_val_feed_dict(size, iter_num, test=test)
         print(feed_dict_val)
-        nodes.append(feed_dict_val['batch1:0'])
+        nodes.append(feed_dict_val[minibatch_iter.placeholders['batch']])
         node_outs_val = sess.run([model.preds, model.loss], feed_dict=feed_dict_val)
         val_preds.append(node_outs_val[0])
         labels.append(batch_labels)
@@ -276,16 +278,16 @@ def train(train_data, test_data=None):
     
     # Train model
     
-    total_steps = 0
+    total_steps = 0 # 总的迭代次数
     avg_time = 0.0
     epoch_val_costs = []
 
     train_adj_info = tf.assign(adj_info, minibatch.adj)
     val_adj_info = tf.assign(adj_info, minibatch.test_adj)
-    for epoch in range(FLAGS.epochs): 
+    for epoch in range(FLAGS.epochs): # 2
         minibatch.shuffle() 
 
-        iter = 0
+        iter = 0 # 一个epoch里的迭代次数
         print('Epoch: %04d' % (epoch + 1))
         epoch_val_costs.append(0)
         while not minibatch.end():
@@ -298,23 +300,23 @@ def train(train_data, test_data=None):
             outs = sess.run([merged, model.opt_op, model.loss, model.preds], feed_dict=feed_dict)
             train_cost = outs[2]
 
-            if iter % FLAGS.validate_iter == 0:
+            if iter % FLAGS.validate_iter == 0: # 1000
                 # Validation
                 sess.run(val_adj_info.op)
-                if FLAGS.validate_batch_size == -1:
+                if FLAGS.validate_batch_size == -1: # 256
                     val_cost, val_f1_mic, val_f1_mac, duration = incremental_evaluate(sess, model, minibatch, FLAGS.batch_size)
                 else:
                     val_cost, val_f1_mic, val_f1_mac, duration = evaluate(sess, model, minibatch, FLAGS.validate_batch_size)
                 sess.run(train_adj_info.op)
                 epoch_val_costs[-1] += val_cost
 
-            if total_steps % FLAGS.print_every == 0:
+            if total_steps % FLAGS.print_every == 0: # 5
                 summary_writer.add_summary(outs[0], total_steps)
     
             # Print results
             avg_time = (avg_time * total_steps + time.time() - t) / (total_steps + 1)
 
-            if total_steps % FLAGS.print_every == 0:
+            if total_steps % FLAGS.print_every == 0: # 每5次迭代
                 train_f1_mic, train_f1_mac = calc_f1(labels, outs[-1])
                 print("Iter:", '%04d' % iter, 
                       "train_loss=", "{:.5f}".format(train_cost),

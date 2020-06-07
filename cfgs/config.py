@@ -46,6 +46,8 @@ def get_x_path(base_path, mode):
         return _mkdir(os.path.join(base_path, "ids"))
     if mode == 'l':
         return _mkdir(os.path.join(base_path, "logs"))
+    if mode == 'r':
+        return _mkdir(os.path.join(base_path, "res")) # 训练结果文件
 
 
 _base_path = get_base_path()
@@ -57,7 +59,13 @@ o_test_data = os.path.join(o_data_path, "test/test")
 
 base_model_path = get_x_path(_base_path, 'm')
 base_log_path = get_x_path(_base_path, 'l')
+base_res_path = get_x_path(_base_path, 'r')
+# 预测结果的文件
+res_age_pred_file = os.path.join(base_res_path, 'age_pred.txt')
+res_gender_pred_file = os.path.join(base_res_path, 'gender_pred.txt')
+res_subimt_file = os.path.join(base_res_path, 'submission.csv')
+# 用户embding的文件
+res_emb_file = os.path.join(base_res_path, 'user_emb.txt')
 
 graphsage_data_path = _mkdir(os.path.join(data_path, "gs_datas"))
-
 graphsage_data_path_user_graph = _mkdir(os.path.join(data_path, "gs_datas_user_graph")) # user 构成的图

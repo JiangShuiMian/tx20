@@ -50,12 +50,12 @@ def load_data(prefix, normalize=True, load_walks=False):
     # 不标记广告id， 不然会删除所有训练节点
     ## Remove all nodes that do not have val/test annotations
     ## (necessary because of networkx weirdness with the Reddit data)
-    # broken_count = 0
-    # for node in G.nodes():
-    #     if not 'val' in G.node[node] or not 'test' in G.node[node]:
-    #         G.remove_node(node)
-    #         broken_count += 1
-    # print("Removed {:d} nodes that lacked proper annotations due to networkx versioning issues".format(broken_count))
+    broken_count = 0
+    for node in G.nodes():
+        if not 'val' in G.node[node] or not 'test' in G.node[node]:
+            G.remove_node(node)
+            broken_count += 1
+    print("Removed {:d} nodes that lacked proper annotations due to networkx versioning issues".format(broken_count))
 
     ## Make sure the graph has edge train_removed annotations
     ## (some datasets might already have this..)

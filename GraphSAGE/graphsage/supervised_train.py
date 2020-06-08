@@ -40,7 +40,7 @@ flags.DEFINE_string('train_prefix', '', 'prefix identifying training data. must 
 flags.DEFINE_string('res_file_name', '', 'result file save to')
 
 # left to default values in main experiments 
-flags.DEFINE_integer('epochs', 1, 'number of epochs to train.')
+flags.DEFINE_integer('epochs', 10, 'number of epochs to train.')
 flags.DEFINE_float('dropout', 0.0, 'dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0.0, 'weight for l2 loss on embedding matrix.')
 flags.DEFINE_integer('max_degree', 32, 'maximum node degree. 最大邻居节点个数')

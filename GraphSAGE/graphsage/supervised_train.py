@@ -56,13 +56,14 @@ flags.DEFINE_integer('identity_dim', 200, 'Set to positive value to use identity
 
 #logging, saving, validation settings etc.
 flags.DEFINE_string('base_log_dir', '.', 'base directory for logging and saving embeddings')
-flags.DEFINE_integer('validate_iter', 1000, "how often to run a validation minibatch.")
+flags.DEFINE_integer('validate_iter', 100, "how often to run a validation minibatch.")
 flags.DEFINE_integer('validate_batch_size', 1024, "how many nodes per validation sample.")
 flags.DEFINE_integer('gpu', 7, "which gpu to use.")
-flags.DEFINE_integer('print_every', 1000, "How often to print training info.")
+flags.DEFINE_integer('print_every', 100, "How often to print training info.")
 flags.DEFINE_integer('max_total_steps', 10**10, "Maximum total number of iterations")
 # flags.DEFINE_integer('max_total_steps', 10, "Maximum total number of iterations")
 
+print('FLAGS.gpu ： %s' % (FLAGS.gpu))
 os.environ["CUDA_VISIBLE_DEVICES"] = str(FLAGS.gpu)
 
 GPU_MEM_FRACTION = 0.8

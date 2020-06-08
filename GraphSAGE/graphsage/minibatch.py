@@ -249,7 +249,7 @@ class NodeMinibatchIterator(object):
         return adj, deg
 
     def construct_test_adj(self):
-        adj = len(self.id2idx)*np.ones((len(self.id2idx)+1, self.max_degree))
+        adj = len(self.id2idx)*np.ones((len(self.id2idx)+1, self.max_degree)) # [numb nodes + 1, max degree] 值为id个数
         for nodeid in self.G.nodes():
             neighbors = np.array([self.id2idx[neighbor] for neighbor in self.G.neighbors(nodeid)])
             if len(neighbors) == 0:

@@ -12,10 +12,10 @@ import random
 FILE_PREFIX_AGE = 'tx-2020-age'
 FILE_PREFIX_GENDER = 'tx-2020-gender'
 
-test_click_log_data = os.path.join(o_test_data, "click_log.csv")
-
-df_test = pd.read_csv(test_click_log_data, encoding='utf-8')
-all_test_uids = set(df_test['user_id'].unique())
+# test_click_log_data = os.path.join(o_test_data, "click_log.csv")
+#
+# df_test = pd.read_csv(test_click_log_data, encoding='utf-8')
+# all_test_uids = set(df_test['user_id'].unique())
 
 res_pred_dic = {}
 

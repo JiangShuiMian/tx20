@@ -218,26 +218,28 @@ def build_edges():
         if len(uids) <= 1:
             continue
 
-        # uids = [x[0] for x in sorted(us, key=lambda x: x[1], reverse=True)] # 降序
-        # del us
         uid_num = len(uids)
         print("%d : %d : %d" % (cids, uid_num, len(ls)))
         cids += 1
 
-        m_node = uids[0] # 使用第一个节点代替cid
-        for n in uids[1:]:
-            up = list(sorted([m_node, n]))
-            edge = "u%d_u%d" % (up[0], up[1])
-            uid_pair_list.append(edge)
+        # m_node = uids[0] # 使用第一个节点代替cid
+        # for n in uids[1:]:
+        #     up = list(sorted([m_node, n]))
+        #     edge = "u%d_u%d" % (up[0], up[1])
+        #     uid_pair_list.append(edge)
 
-        # for i in range(0, uid_num-1):
-        #     for j in range(i+1, uid_num):
-        #         edge1 = "u%d_u%d" % (uids[i], uids[j])
-        #         uid_pair_list.append(edge1)
-        #         ls.add(edge1)
-        #         index += 1
-                # if index % 100000 == 0:
-                #     print("%d: %d" % (index, len(ls)))
+        uid_pair_list_tmp = []
+        for i in range(0, uid_num - 1):
+            for j in range(i + 1, uid_num):
+                up = list(sorted([uids[i], uids[j]]))
+                edge = "u%d_u%d" % (up[0], up[1])
+                uid_pair_list_tmp.append(edge)
+
+        s = random.sample(uid_pair_list_tmp, uid_num)
+
+        uid_pair_list.extend(s)
+
+
 
     print('edge num: %d' % (len(ls)))
     print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 54960296
@@ -308,7 +310,7 @@ def g_test():
 
 
 if __name__ == '__main__':
-    get_nx_G()
-    # build_edges()
-    # build_graph()
-    # g_test()
+    # get_nx_G()
+    build_edges()
+    build_graph()
+    g_test()

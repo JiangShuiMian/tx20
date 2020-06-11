@@ -33,13 +33,13 @@ df_test = pd.read_csv(test_click_log_data, dtype={'creative_id': str})
 df_cl = pd.concat([df_train, df_test], axis=0)
 
 sentences = df_cl.groupby(['user_id']).apply(lambda x: x['creative_id'].tolist()).tolist()
-model = Word2Vec(sentences=sentences, min_count=1, sg=1, window=10, size=64, workers=22, seed=2020, iter=5)
+model = Word2Vec(sentences=sentences, min_count=1, sg=1, window=10, size=128, workers=22, seed=2020, iter=10)
 
 user_feature = df_cl.groupby(['user_id']).apply(lambda x: np.mean([model[v] for v in x['creative_id'].tolist()], axis=0))
 user_feature = user_feature.reset_index()
 user_feature.columns = ['user_id', 'feat']
 
-res = np.zeros((user_feature.shape[0], 64))
+res = np.zeros((user_feature.shape[0], 128))
 for row in user_feature.iterrows():
     userid = row[1]['user_id']
     feat = row[1]['feat']

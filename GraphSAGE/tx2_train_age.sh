@@ -1,1 +1,1 @@
-python -m graphsage.supervised_train --gpu 7 --train_prefix /home/wangqiang/wq/x/tx20/datas/gs_datas_user_graph/tx-2020-age --res_file_name /home/wangqiang/wq/x/tx20/res/age_pred.txt --model graphsage_maxpool
+python -m graphsage.supervised_train --gpu 7 --train_prefix /home/wangqiang/wq/x/tx20/datas/gs_datas_user_graph/tx-2020-age --res_file_name /home/wangqiang/wq/x/tx20/res/age_pred.txt --model graphsage_seq

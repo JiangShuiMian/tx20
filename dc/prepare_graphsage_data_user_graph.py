@@ -234,12 +234,9 @@ def build_edges():
                 up = list(sorted([uids[i], uids[j]]))
                 edge = "u%d_u%d" % (up[0], up[1])
                 uid_pair_list_tmp.append(edge)
-
-        s = random.sample(uid_pair_list_tmp, uid_num)
-
+        sampler_num = min(uid_num, len(uid_pair_list_tmp))
+        s = random.sample(uid_pair_list_tmp, sampler_num)
         uid_pair_list.extend(s)
-
-
 
     print('edge num: %d' % (len(ls)))
     print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 54960296

@@ -240,7 +240,7 @@ def build_edges():
         # s = random.sample(uid_pair_list_tmp, sampler_num)
 
         print("cid: %d, use_num: %d" % (cids, uid_num))
-        uid_pair_list.extend(s)
+        # uid_pair_list.extend(s)
 
     print('edge num: %d' % (len(ls)))
     print('uid_pair_list number: %d ' % (len(uid_pair_list))) # 54960296

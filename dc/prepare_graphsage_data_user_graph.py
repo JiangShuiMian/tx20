@@ -222,20 +222,22 @@ def build_edges():
 
         cids += 1
 
-        # m_node = uids[0] # 使用第一个节点代替cid
-        # for n in uids[1:]:
-        #     up = list(sorted([m_node, n]))
-        #     edge = "u%d_u%d" % (up[0], up[1])
-        #     uid_pair_list.append(edge)
+        m_node = random.choice(uids) # 使用第一个节点代替cid
+        for n in uids:
+            if m_node == n:
+                continue
+            up = list(sorted([m_node, n]))
+            edge = "u%d_u%d" % (up[0], up[1])
+            uid_pair_list.append(edge)
 
-        uid_pair_list_tmp = []
-        for i in range(0, uid_num - 1):
-            for j in range(i + 1, uid_num):
-                up = list(sorted([uids[i], uids[j]]))
-                edge = "u%d_u%d" % (up[0], up[1])
-                uid_pair_list_tmp.append(edge)
-        sampler_num = min(uid_num, len(uid_pair_list_tmp))
-        s = random.sample(uid_pair_list_tmp, sampler_num)
+        # uid_pair_list_tmp = []
+        # for i in range(0, uid_num - 1):
+        #     for j in range(i + 1, uid_num):
+        #         up = list(sorted([uids[i], uids[j]]))
+        #         edge = "u%d_u%d" % (up[0], up[1])
+        #         uid_pair_list_tmp.append(edge)
+        # sampler_num = min(uid_num, len(uid_pair_list_tmp))
+        # s = random.sample(uid_pair_list_tmp, sampler_num)
 
         print("cid: %d, use_num: %d, edge_num: %d, samper_num: %d" % (cids, uid_num, len(uid_pair_list_tmp), len(s)))
         uid_pair_list.extend(s)

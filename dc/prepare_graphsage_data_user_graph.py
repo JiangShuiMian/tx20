@@ -219,7 +219,7 @@ def build_edges():
             continue
 
         uid_num = len(uids)
-        print("%d : %d : %d" % (cids, uid_num, len(ls)))
+
         cids += 1
 
         # m_node = uids[0] # 使用第一个节点代替cid
@@ -236,6 +236,8 @@ def build_edges():
                 uid_pair_list_tmp.append(edge)
         sampler_num = min(uid_num, len(uid_pair_list_tmp))
         s = random.sample(uid_pair_list_tmp, sampler_num)
+
+        print("cid: %d, use_num: %d, edge_num: %d, samper_num: %d" % (cids, uid_num, len(uid_pair_list_tmp), len(s)))
         uid_pair_list.extend(s)
 
     print('edge num: %d' % (len(ls)))

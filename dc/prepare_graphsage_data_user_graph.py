@@ -222,10 +222,10 @@ def build_edges():
 
         cids += 1
 
-        m_node = random.choice(uids) # 使用第一个节点代替cid
-        for n in uids:
-            if m_node == n:
-                continue
+        m_node = uids[0] #random.choice(uids) # 使用第一个节点代替cid
+        for n in uids[1:]:
+            # if m_node == n:
+            #     continue
             up = list(sorted([m_node, n]))
             edge = "u%d_u%d" % (up[0], up[1])
             uid_pair_list.append(edge)

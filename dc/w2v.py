@@ -32,7 +32,7 @@ df_test = pd.read_csv(test_click_log_data, dtype=str)
 
 df_cl = pd.concat([df_train, df_test], axis=0)
 
-all_cols = ['creative_id', 'ad_id', 'product_id', 'advertiser_id', 'industry']
+all_cols = ['creative_id', 'ad_id', 'product_id',]# 'advertiser_id', 'industry']
 emb_size = 64
 res = np.zeros((len(id_map), emb_size * len(all_cols)))
 

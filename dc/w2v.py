@@ -18,6 +18,9 @@ FILE_PREFIX_GENDER = 'tx-2020-gender'
 features_file_gender = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_GENDER + "-feats.npy")
 features_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-feats.npy")
 
+ad_train_file = os.path.join(o_train_data, 'ad.csv')
+ad_test_file = os.path.join(o_test_data, 'ad.csv')
+
 id_map_file_age = os.path.join(graphsage_data_path_user_graph, FILE_PREFIX_AGE + "-id_map.json")
 
 with open(id_map_file_age, 'r') as f:
@@ -28,7 +31,12 @@ trian_click_log_data = os.path.join(o_train_data, "click_log.csv")
 test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 df_train = pd.read_csv(trian_click_log_data, dtype=str)
+df_train_ad = pd.read_csv(ad_train_file, dtype=str)
+df_train = df_train.join(df_train_ad, on="creative_id", how='left')
+
 df_test = pd.read_csv(test_click_log_data, dtype=str)
+df_test_ad = pd.read_csv(ad_test_file, dtype=str)
+df_test = df_test.join(df_test_ad, on="creative_id", how='left')
 
 df_cl = pd.concat([df_train, df_test], axis=0)
 
@@ -52,7 +60,7 @@ for index, col in enumerate(all_cols):
         end_pos = emb_size * (index + 1)
         res[id_map.get('u%s'%(userid))][start_pos: end_pos] = np.array(feat)
 
-    print("index %d: col: %s w2v done !")
+    print("index %d: col: %s w2v done !" % (index, col))
 
 np.save(features_file_age, res)
 np.save(features_file_gender, res)

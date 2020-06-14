@@ -32,11 +32,11 @@ test_click_log_data = os.path.join(o_test_data, "click_log.csv")
 
 df_train = pd.read_csv(trian_click_log_data, dtype=str)
 df_train_ad = pd.read_csv(ad_train_file, dtype=str)
-df_train = df_train.join(df_train_ad, on="creative_id", how='left')
+df_train = pd.merge(left=df_train, right=df_train_ad, on="creative_id", how='left')
 
 df_test = pd.read_csv(test_click_log_data, dtype=str)
 df_test_ad = pd.read_csv(ad_test_file, dtype=str)
-df_test = df_test.join(df_test_ad, on="creative_id", how='left')
+df_test = pd.merge(left=df_test, right=df_test_ad, on="creative_id", how='left')
 
 df_cl = pd.concat([df_train, df_test], axis=0)
 
